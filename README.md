@@ -1,2 +1,2 @@
 # squealer
-Telling tales on your for leaking secrets!
+Telling tales on you for leaking secrets!
