@@ -27,7 +27,7 @@ func NewGitScanner(sc ScannerConfig) (*GitScanner, error) {
 		return nil, err
 	}
 	metrics := mertics.NewMetrics()
-	mc := match.NewMatcherController(sc.cfg, metrics)
+	mc := match.NewMatcherController(sc.cfg, metrics, sc.redacted)
 
 	return &GitScanner{
 		mc:               *mc,
@@ -140,7 +140,6 @@ func (s *GitScanner) processFile(file *object.File) error {
 	if err := s.mc.Evaluate(file); err == nil {
 		return err
 	}
-
 	return nil
 }
 

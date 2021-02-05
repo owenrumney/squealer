@@ -1,0 +1,26 @@
+language: go
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+    go: 1.15.x
+  - os: osx
+    go: 1.15.x
+  fast_finish: true
+script:
+- make build
+deploy:
+- provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: "cg4cy1N5Flzi/+7Hroh8Ysyocf6v0jqhyClohwMdky+rTM3006ZE7XVcHXiIY8x20UmqSASHCPo+tvnJX+N9i5AEIE8Yi84FBQndgpQsQkv6OYXc6ItCo6TmicUAtasudCOF+gVkVLdTYTzJd1EgvZ+HhaW9eqwYsP1rgkVDHl3HpyqLgN8JqAF75DF4iUctesNkAse+LFlZjoDFWvhelRHmY9wUiS8vEbkOh/U2X/WS86EPkhGsfylWAys796Wjx9l0VIaHIhl5ey1mm6YkkOBxt0fr2DRBfFv+pZogVrMHiPoZw5rRXOU6sgRXq+KAreWyP15y47e+nk8onw46xf9l5lFX2UTnXNCIeuLbKY7l9+iiq/Yci9jGmLL/9BQJxiITaWFfrQZO4l+2QfRSJ1xquBjAdzHAJ4NiwC5IOf7w8pZ8rzx87ELhDHdKiiurJ78Rm2eo3nG89Y0KqdhrmxcSKmU+TmveTQdK84BAZJagivtLfqkgDa7zXIUOiXQaAevW/Mi1/vIwE+t5Fz7oZlhk3E0vSW0sxAXKjt5Bzt6n9onojAsMOUzQWW4n1DJRlq71YOn/k0iAijPjSvrbIWL66vikX8dptFW6lK/7pj4C4z1xjL5yV24oaMWFyjqQGcQOUDOUuXhYg5NHKvFBhEp4oXsdyqH5J3qMTAIvGpA="
+  name: squealer $TRAVIS_TAG
+  file:
+  - bin/squealer.darwin.amd64.$TRAVIS_TAG
+  - bin/squealer.linux.amd64.$TRAVIS_TAG
+  on:
+    repo: owenrumney/squealer
+    tags: true
+env:
+  global:
+    secure: D7e1Rip3/c79OyBF2SarRAy2H/GgC5pwvwr5oko+tKvDWmCfcYqcNUB9Ih3SmwvLu9HqOr+a3EU1doa2ihrFArGpmqmuKU5lQ9QBwlGcAd11FHnrgYMx7G/pOJfGWolChjGc+HXe8OVaxvEmDHjhKzKvaSCHkheF1OTCK1yepRovVXYHiAzwv6EVbVgQikgvl+bHi3wVYNQjp4vah1yWjwtvqg3zu7cphGiDIm8RIObzejC2gaKZOTIJ0fA5mnmayPnS/PLUVBhtVldtVDIdfjUmCBdwPhLXt+ImszGaCY8QE+IDFKnBkzQPU4HPGMCpONdrGmTZe23t+k9cJtnJR+pqXgXIgboppf+F/1Z7lzJT2oIEwxcKNODL47EFLWYKWXLFyeozvGpIFfywkQfS06xRUrEsKW4u9FZBKT6rTvWh2/ZH1Gs9adiBcKugW4BySAq6MacO4nOlvIEPQBV/VMiIMPhJ3bx/pOiqyOnkDgG4lWIVEGz2QO1H9L/S0joyu3AmSa9UiMasjOEH2vbriZMu6aQc05JZhCoTvkriuOvZVomQ3gEbB7mqCdV8hg/2hxk80XryqudVzJcjEw5QblTn0VgS3LgMgDwEOyUyweOthWDHg7zm32VWuHwaK+MDeCMeaXeczGU+E6atbxlIdNw5UaZfIdVv92BYW/U+K30=

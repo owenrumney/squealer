@@ -23,15 +23,17 @@ type MatcherController struct {
 	matchers       Matchers
 	exclusions     []config.RuleException
 	transgressions *Transgressions
-	metrics *mertics.Metrics
+	metrics        *mertics.Metrics
+	redacted       bool
 }
 
-func NewMatcherController(cfg *config.Config, metrics *mertics.Metrics) *MatcherController {
+func NewMatcherController(cfg *config.Config, metrics *mertics.Metrics, redacted bool) *MatcherController {
 	mc := &MatcherController{
 		matchers:       []*Matcher{},
 		transgressions: newTransgressions(),
 		exclusions:     cfg.Exceptions,
-		metrics: metrics,
+		metrics:        metrics,
+		redacted:       redacted,
 	}
 
 	for _, rule := range cfg.Rules {
@@ -74,7 +76,7 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 
 	m := matcher.test.FindString(*content)
 	if len(m) > 0 {
-		 lineContent := lineInFile(m, lines)
+		lineContent := lineInFile(m, lines)
 		secretHash := mc.newHash(m)
 		key := fmt.Sprintf("%s:%s", name, secretHash)
 		mc.metrics.UpdateTransgressionsFound()
@@ -87,7 +89,13 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 
 		if !mc.transgressions.Exists(key) {
 			mc.metrics.UpdateTransgressionsReported()
-			mc.transgressions.Add(key, newTransgression(lineContent, name, m, secretHash))
+			transgression := newTransgression(lineContent, name, m, secretHash)
+			mc.transgressions.Add(key, transgression)
+			if mc.redacted {
+				fmt.Printf(transgression.Redacted())
+			} else {
+				fmt.Printf(transgression.String())
+			}
 		}
 	}
 }
@@ -102,7 +110,7 @@ func (mc *MatcherController) newHash(secret string) string {
 func lineInFile(m string, lines []string) string {
 	for _, line := range lines {
 		if strings.Contains(line, m) {
-			return  line
+			return line
 		}
 	}
 	return ""
