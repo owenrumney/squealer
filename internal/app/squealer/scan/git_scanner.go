@@ -11,22 +11,28 @@ import (
 	"sync"
 	"time"
 
+	"github.com/owenrumney/squealer/internal/app/squealer/config"
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
 
 type GitScanner struct {
 	mc               match.MatcherController
+	metrics          *mertics.Metrics
 	workingDirectory string
 	ignorePaths      []string
 }
 
-func New(mc match.MatcherController, basePath string) (*GitScanner, error) {
+func NewGitScanner(basePath string, cfg *config.Config) (*GitScanner, error) {
 	if _, err := os.Stat(basePath); err != nil {
 		return nil, err
 	}
+	metrics := mertics.NewMetrics()
+	mc := match.NewMatcherController(cfg, metrics)
 
 	return &GitScanner{
-		mc:               mc,
+		mc:               *mc,
+		metrics:          metrics,
 		workingDirectory: basePath,
 		ignorePaths: []string{
 			"vendor",
@@ -42,20 +48,22 @@ func (s *GitScanner) Scan() error {
 		return err
 	}
 
-	ref, err := client.Head()
-	if err != nil {
-		return err
+	var commits object.CommitIter
+	ref, _ := client.Head()
+	if ref != nil {
+		commits, err = client.Log(&git.LogOptions{From: ref.Hash()})
+		if err != nil {
+			return err
+		}
+	} else {
+		commits, err = client.CommitObjects()
+		if err != nil {
+			return err
+		}
 	}
 
-	commits, err := client.Log(&git.LogOptions{
-		From: ref.Hash(),
-	})
-	if err != nil {
-		return err
-	}
 
 	start := time.Now()
-
 	commit, err := commits.Next()
 	for err == nil && commit != nil {
 		func(c *object.Commit) {
@@ -111,10 +119,12 @@ func (s *GitScanner) processCommit(commit *object.Commit) error {
 	close(ch)
 	wg.Wait()
 
+	s.metrics.UpdateCommitsProcessed()
 	return nil
 }
 
 func (s *GitScanner) processFile(commit *object.Commit, file *object.File) error {
+	s.metrics.UpdateFilesProcessed()
 	if isBin, err := file.IsBinary(); err != nil || isBin {
 		return nil
 	}
@@ -129,9 +139,24 @@ func (s *GitScanner) processFile(commit *object.Commit, file *object.File) error
 		return nil
 	}
 
-	if err := s.mc.Evaluate(file, commit); err == nil {
+	if err := s.mc.Evaluate(file); err == nil {
 		return err
 	}
 
+
 	return nil
+}
+
+func (s *GitScanner) ShowMetrics() {
+	fmt.Printf(`
+Processing:
+  commits:      %d
+  commit files: %d
+
+Transgressions:
+  identified:   %d
+  ignored:      %d
+  reported:     %d
+
+`, s.metrics.CommitsProcessed, s.metrics.FilesProcessed, s.metrics.TransgressionsFound, s.metrics.TransgressionsIgnored, s.metrics.TransgressionsReported)
 }

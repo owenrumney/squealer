@@ -7,59 +7,87 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"regexp"
 	"strings"
+
+	"github.com/owenrumney/squealer/internal/app/squealer/config"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
 
 type Matcher struct {
-	test *regexp.Regexp
+	test        *regexp.Regexp
+	description string
 }
 
 type Matchers []*Matcher
 
 type MatcherController struct {
 	matchers       Matchers
+	exclusions     []config.RuleException
 	transgressions *Transgressions
+	metrics *mertics.Metrics
 }
 
-func NewMatcherController() *MatcherController {
-	return &MatcherController{
+func NewMatcherController(cfg *config.Config, metrics *mertics.Metrics) *MatcherController {
+	mc := &MatcherController{
 		matchers:       []*Matcher{},
 		transgressions: newTransgressions(),
+		exclusions:     cfg.Exceptions,
+		metrics: metrics,
 	}
+
+	for _, rule := range cfg.Rules {
+		err := mc.add(rule)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
+
+	return mc
 }
 
-func (mc *MatcherController) Add(regex string) error {
-	compile, err := regexp.Compile(regex)
+func (mc *MatcherController) add(rule config.MatchRule) error {
+	compile, err := regexp.Compile(rule.Rule)
 	if err != nil {
 		return fmt.Errorf("failed to compile the regex. %v", err.Error())
 	}
 	mc.matchers = append(mc.matchers, &Matcher{
-		test: compile,
+		test:        compile,
+		description: rule.Description,
 	})
 	return nil
 }
 
-func (mc *MatcherController) Evaluate(file *object.File, commit *object.Commit) error {
+func (mc *MatcherController) Evaluate(file *object.File) error {
 	content, err := file.Contents()
 	if err != nil {
 		return err
 	}
 	for _, matcher := range mc.matchers {
 		if matcher.test.MatchString(content) {
-			mc.addTransgression(&content, file.Name, commit, matcher)
+			mc.addTransgression(&content, file.Name, matcher)
 		}
 	}
 	return nil
 }
 
-func (mc *MatcherController) addTransgression(content *string, name string, commit *object.Commit, matcher *Matcher) {
+func (mc *MatcherController) addTransgression(content *string, name string, matcher *Matcher) {
 	lines := strings.Split(*content, "\n")
 
 	m := matcher.test.FindString(*content)
 	if len(m) > 0 {
-		lineNo, lineContent := lineInFile(m, lines)
-		key := fmt.Sprintf("%s:%s", name, mc.newHash(m))
+		 lineContent := lineInFile(m, lines)
+		secretHash := mc.newHash(m)
+		key := fmt.Sprintf("%s:%s", name, secretHash)
+		mc.metrics.UpdateTransgressionsFound()
+		for _, exclusion := range mc.exclusions {
+			if exclusion.ExceptionString == key {
+				mc.metrics.UpdateTransgressionsIgnored()
+				return
+			}
+		}
+
 		if !mc.transgressions.Exists(key) {
-			mc.transgressions.Add(key, newTransgression(lineNo, lineContent, commit, name, m))
+			mc.metrics.UpdateTransgressionsReported()
+			mc.transgressions.Add(key, newTransgression(lineContent, name, m, secretHash))
 		}
 	}
 }
@@ -71,11 +99,11 @@ func (mc *MatcherController) newHash(secret string) string {
 	return hash
 }
 
-func lineInFile(m string, lines []string) (int, string) {
-	for i, line := range lines {
+func lineInFile(m string, lines []string) string {
+	for _, line := range lines {
 		if strings.Contains(line, m) {
-			return i + 1, line
+			return  line
 		}
 	}
-	return -1, ""
+	return ""
 }

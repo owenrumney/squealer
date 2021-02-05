@@ -2,8 +2,6 @@ package match
 
 import (
 	"fmt"
-	"github.com/go-git/go-git/v5/plumbing/object"
-	"hash/fnv"
 	"strings"
 )
 
@@ -19,14 +17,13 @@ type Transgression struct {
 	redacted       string
 }
 
-func newTransgression(lineNo int, lineContent string, commit *object.Commit, filename, match string) Transgression {
+func newTransgression(lineContent, filename, match, hash string) Transgression {
 	content := strings.TrimSpace(lineContent)
 
 	return Transgression{
-		lineNo:      lineNo,
 		lineContent: content,
 		filename:    filename,
-		hash:        hashSimple(match),
+		hash:        hash,
 		match:       match,
 		redacted:    strings.ReplaceAll(content, match, "REDACTED"),
 	}
@@ -46,10 +43,4 @@ filename: | %s
 hash:     | %s
 rule:     | %s:%s
 	`, t.redacted, t.filename, t.hash, t.filename, t.hash)
-}
-
-func hashSimple(s string) string {
-	h := fnv.New64a()
-	h.Write([]byte(s))
-	return fmt.Sprint(h.Sum64())
 }
