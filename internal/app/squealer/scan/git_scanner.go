@@ -11,7 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/config"
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
@@ -23,17 +22,17 @@ type GitScanner struct {
 	ignorePaths      []string
 }
 
-func NewGitScanner(basePath string, cfg *config.Config) (*GitScanner, error) {
-	if _, err := os.Stat(basePath); err != nil {
+func NewGitScanner(sc ScannerConfig) (*GitScanner, error) {
+	if _, err := os.Stat(sc.basepath); err != nil {
 		return nil, err
 	}
 	metrics := mertics.NewMetrics()
-	mc := match.NewMatcherController(cfg, metrics)
+	mc := match.NewMatcherController(sc.cfg, metrics)
 
 	return &GitScanner{
 		mc:               *mc,
 		metrics:          metrics,
-		workingDirectory: basePath,
+		workingDirectory: sc.basepath,
 		ignorePaths: []string{
 			"vendor",
 			"internal/swagger-models",
@@ -61,7 +60,6 @@ func (s *GitScanner) Scan() error {
 			return err
 		}
 	}
-
 
 	start := time.Now()
 	commit, err := commits.Next()
@@ -102,7 +100,7 @@ func (s *GitScanner) processCommit(commit *object.Commit) error {
 					wg.Done()
 					return
 				}
-				err := s.processFile(commit, f)
+				err := s.processFile(f)
 				if err != nil {
 					fmt.Println(err.Error())
 				}
@@ -123,7 +121,7 @@ func (s *GitScanner) processCommit(commit *object.Commit) error {
 	return nil
 }
 
-func (s *GitScanner) processFile(commit *object.Commit, file *object.File) error {
+func (s *GitScanner) processFile(file *object.File) error {
 	s.metrics.UpdateFilesProcessed()
 	if isBin, err := file.IsBinary(); err != nil || isBin {
 		return nil
@@ -143,12 +141,12 @@ func (s *GitScanner) processFile(commit *object.Commit, file *object.File) error
 		return err
 	}
 
-
 	return nil
 }
 
-func (s *GitScanner) ShowMetrics() {
-	fmt.Printf(`
+func (s *GitScanner) Exit(printMetrics bool) {
+	if !printMetrics {
+		fmt.Printf(`
 Processing:
   commits:      %d
   commit files: %d
@@ -158,5 +156,15 @@ Transgressions:
   ignored:      %d
   reported:     %d
 
-`, s.metrics.CommitsProcessed, s.metrics.FilesProcessed, s.metrics.TransgressionsFound, s.metrics.TransgressionsIgnored, s.metrics.TransgressionsReported)
+`,
+			s.metrics.CommitsProcessed,
+			s.metrics.FilesProcessed,
+			s.metrics.TransgressionsFound,
+			s.metrics.TransgressionsIgnored,
+			s.metrics.TransgressionsReported)
+	}
+	if s.metrics.TransgressionsReported > 0 {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }
