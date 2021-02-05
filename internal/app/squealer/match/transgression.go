@@ -20,32 +20,32 @@ type Transgression struct {
 }
 
 func newTransgression(lineNo int, lineContent string, commit *object.Commit, filename, match string) Transgression {
-
-	commitHash := commit.Hash.String()
-	commitAuthor := commit.Author.Name
-	commitEmail := commit.Author.Email
+	content := strings.TrimSpace(lineContent)
 
 	return Transgression{
-		lineNo:         lineNo,
-		lineContent:    lineContent,
-		commit:         commitHash,
-		committer:      commitAuthor,
-		committerEmail: commitEmail,
-		filename:       filename,
-		hash:           hashSimple(match),
-		match:          match,
-		redacted:       strings.ReplaceAll(lineContent, match, "REDACTED"),
+		lineNo:      lineNo,
+		lineContent: content,
+		filename:    filename,
+		hash:        hashSimple(match),
+		match:       match,
+		redacted:    strings.ReplaceAll(content, match, "REDACTED"),
 	}
 }
 
 func (t Transgression) String() string {
-	return fmt.Sprintf(`line:      |%d
-content:   |%s
-commit:    |%s
-committer: |%s (%s)
-filename:  |%s
-hash:      |%s
-	`, t.lineNo, t.redacted, t.commit, t.committer, t.committerEmail, t.filename, t.hash)
+	return fmt.Sprintf(`content:  | %s
+filename: | %s
+hash:     | %s
+rule:     | %s:%s
+	`, t.lineContent, t.filename, t.hash, t.filename, t.hash)
+}
+
+func (t Transgression) Redacted() string {
+	return fmt.Sprintf(`content:  | %s
+filename: | %s
+hash:     | %s
+rule:     | %s:%s
+	`, t.redacted, t.filename, t.hash, t.filename, t.hash)
 }
 
 func hashSimple(s string) string {

@@ -18,7 +18,7 @@ func newTransgressions() *Transgressions {
 }
 
 func (t *Transgressions) Add(key string, transgression Transgression) {
-	fmt.Println(transgression)
+	fmt.Println(transgression.Redacted())
 
 	t.Lock()
 	if existing := t.internal[key]; existing == nil {
