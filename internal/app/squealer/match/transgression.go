@@ -39,12 +39,12 @@ func newTransgression(lineNo int, lineContent string, commit *object.Commit, fil
 }
 
 func (t Transgression) String() string {
-		return fmt.Sprintf(`line:      |%d
-	content:   |%s
-	commit:    |%s
-	committer: |%s (%s)
-	filename:  |%s
-	hash:      |%s
+	return fmt.Sprintf(`line:      |%d
+content:   |%s
+commit:    |%s
+committer: |%s (%s)
+filename:  |%s
+hash:      |%s
 	`, t.lineNo, t.redacted, t.commit, t.committer, t.committerEmail, t.filename, t.hash)
 }
 

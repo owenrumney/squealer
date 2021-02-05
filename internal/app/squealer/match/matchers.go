@@ -1,6 +1,8 @@
 package match
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
 	"fmt"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"regexp"
@@ -55,11 +57,18 @@ func (mc *MatcherController) addTransgression(content *string, name string, comm
 	m := matcher.test.FindString(*content)
 	if len(m) > 0 {
 		lineNo, lineContent := lineInFile(m, lines)
-		key := fmt.Sprintf("%s:%s", name, hashSimple(m))
+		key := fmt.Sprintf("%s:%s", name, mc.newHash(m))
 		if !mc.transgressions.Exists(key) {
 			mc.transgressions.Add(key, newTransgression(lineNo, lineContent, commit, name, m))
 		}
 	}
+}
+
+func (mc *MatcherController) newHash(secret string) string {
+	hasher := sha1.New()
+	hasher.Write([]byte(secret))
+	hash := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	return hash
 }
 
 func lineInFile(m string, lines []string) (int, string) {

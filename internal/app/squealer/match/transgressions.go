@@ -24,7 +24,6 @@ func (t *Transgressions) Add(key string, transgression Transgression) {
 	if existing := t.internal[key]; existing == nil {
 		t.internal[key] = &transgression
 		t.counter += 1
-		fmt.Printf("adding transgression %d\n", t.counter)
 	}
 	t.Unlock()
 }
