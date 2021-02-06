@@ -55,7 +55,7 @@ func startSquealing(_ *cobra.Command, args []string) {
 	}
 	metrics := scanner.GetMetrics()
 	if !concise {
-		printMetrics(metrics)
+		fmt.Println(printMetrics(metrics))
 	}
 	if metrics.TransgressionsReported > 0 {
 		os.Exit(1)
@@ -63,9 +63,9 @@ func startSquealing(_ *cobra.Command, args []string) {
 	os.Exit(0)
 }
 
-func printMetrics(metrics *mertics.Metrics) {
+func printMetrics(metrics *mertics.Metrics) string {
 	duration, _ := metrics.Duration()
-	fmt.Printf(`
+	return fmt.Sprintf(`
 Processing:
   duration:     %4.2fs
   commits:      %d
