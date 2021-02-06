@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/config"
 	"github.com/owenrumney/squealer/internal/app/squealer/scan"
@@ -19,6 +22,7 @@ var (
 	redacted       = false
 	concise        = true
 	configFilePath string
+	fromHash       string
 )
 
 func startSquealing(_ *cobra.Command, args []string) {
@@ -41,7 +45,7 @@ func startSquealing(_ *cobra.Command, args []string) {
 	if err != nil {
 		panic(err)
 	}
-	scanner.Exit(concise)
+	scanner.Shutdown(concise)
 }
 
 func main() {
@@ -49,7 +53,18 @@ func main() {
 	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output")
 	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules")
 
+	listenForExit()
 	if err := rootcmd.Execute(); err != nil {
 		fmt.Printf(err.Error())
 	}
+}
+
+func listenForExit() {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Println("\r- Exiting")
+		os.Exit(0)
+	}()
 }

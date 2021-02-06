@@ -7,9 +7,10 @@ type Scanner interface {
 }
 
 type ScannerConfig struct {
-	cfg *config.Config
+	cfg      *config.Config
 	basepath string
 	redacted bool
+	fromRef  string
 }
 
 func NewScannerConfig(basepath string, redacted bool, cfg *config.Config) ScannerConfig {
