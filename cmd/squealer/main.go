@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
@@ -21,6 +22,7 @@ var rootcmd = &cobra.Command{
 var (
 	redacted       = false
 	concise        = true
+	noGit          = false
 	configFilePath string
 	fromHash       string
 )
@@ -37,7 +39,13 @@ func startSquealing(_ *cobra.Command, args []string) {
 		panic(err)
 	}
 
-	scanner, err := scan.NewGitScanner(scan.NewScannerConfig(basePath, redacted, cfg))
+	scanner, err := scan.NewScanner(scan.ScannerConfig{
+		Cfg:      cfg,
+		Basepath: basePath,
+		Redacted: redacted,
+		NoGit:    noGit,
+		FromHash: fromHash,
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -45,13 +53,44 @@ func startSquealing(_ *cobra.Command, args []string) {
 	if err != nil {
 		panic(err)
 	}
-	scanner.Shutdown(concise)
+	metrics := scanner.GetMetrics()
+	if !concise {
+		printMetrics(metrics)
+	}
+	if metrics.TransgressionsReported > 0 {
+		os.Exit(1)
+	}
+	os.Exit(0)
+}
+
+func printMetrics(metrics *mertics.Metrics) {
+	duration, _ := metrics.Duration()
+	fmt.Printf(`
+Processing:
+  duration:     %4.2fs
+  commits:      %d
+  commit files: %d
+
+transgressionMap:
+  identified:   %d
+  ignored:      %d
+  reported:     %d
+
+`,
+		duration,
+		metrics.CommitsProcessed,
+		metrics.FilesProcessed,
+		metrics.TransgressionsFound,
+		metrics.TransgressionsIgnored,
+		metrics.TransgressionsReported)
 }
 
 func main() {
-	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", true, "Display the results redacted")
-	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output")
-	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules")
+	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", true, "Display the results redacted.")
+	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output.")
+	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", false, "Scan as a directory rather than a git history.")
+	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
+	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The starting hash to scan from.")
 
 	listenForExit()
 	if err := rootcmd.Execute(); err != nil {

@@ -4,7 +4,6 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"regexp"
 	"strings"
 
@@ -58,14 +57,10 @@ func (mc *MatcherController) add(rule config.MatchRule) error {
 	return nil
 }
 
-func (mc *MatcherController) Evaluate(file *object.File) error {
-	content, err := file.Contents()
-	if err != nil {
-		return err
-	}
+func (mc *MatcherController) Evaluate(filename, content string) error {
 	for _, matcher := range mc.matchers {
 		if matcher.test.MatchString(content) {
-			mc.addTransgression(&content, file.Name, matcher)
+			mc.addTransgression(&content, filename, matcher)
 		}
 	}
 	return nil
