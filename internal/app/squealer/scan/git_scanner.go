@@ -3,16 +3,16 @@ package scan
 import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"io"
+	"math"
 	"os"
 	"runtime"
 	"strings"
 	"sync"
-	"time"
-
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
-	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
 
 type GitScanner struct {
@@ -20,6 +20,8 @@ type GitScanner struct {
 	metrics          *mertics.Metrics
 	workingDirectory string
 	ignorePaths      []string
+	fromRef          plumbing.Hash
+	ignoreExtensions []string
 }
 
 func NewGitScanner(sc ScannerConfig) (*GitScanner, error) {
@@ -29,16 +31,18 @@ func NewGitScanner(sc ScannerConfig) (*GitScanner, error) {
 	metrics := mertics.NewMetrics()
 	mc := match.NewMatcherController(sc.cfg, metrics, sc.redacted)
 
-	return &GitScanner{
+	scanner := &GitScanner{
 		mc:               *mc,
 		metrics:          metrics,
 		workingDirectory: sc.basepath,
-		ignorePaths: []string{
-			"vendor",
-			"internal/swagger-models",
-			"internal/swagger-clients",
-		},
-	}, nil
+		ignorePaths:      sc.cfg.IgnorePrefixes,
+		ignoreExtensions: sc.cfg.IgnoreExtensions,
+	}
+	if len(sc.fromRef) > 0 {
+		scanner.fromRef = plumbing.NewHash(sc.fromRef)
+	}
+
+	return scanner, nil
 }
 
 func (s *GitScanner) Scan() error {
@@ -47,21 +51,12 @@ func (s *GitScanner) Scan() error {
 		return err
 	}
 
-	var commits object.CommitIter
-	ref, _ := client.Head()
-	if ref != nil {
-		commits, err = client.Log(&git.LogOptions{From: ref.Hash()})
-		if err != nil {
-			return err
-		}
-	} else {
-		commits, err = client.CommitObjects()
-		if err != nil {
-			return err
-		}
+	commits, err := s.getRelevantCommitIter(client)
+	if err != nil {
+		return err
 	}
 
-	start := time.Now()
+	s.metrics.StartTimer()
 	commit, err := commits.Next()
 	for err == nil && commit != nil {
 		func(c *object.Commit) {
@@ -71,14 +66,37 @@ func (s *GitScanner) Scan() error {
 		}(commit)
 		commit, err = commits.Next()
 	}
-	stop := time.Now()
+	s.metrics.StopTimer()
 
 	if err != nil && err != io.EOF {
 		fmt.Printf("error is not null %s\n", err.Error())
 	}
-
-	fmt.Printf("Process took %v\n", stop.Sub(start).Seconds())
 	return nil
+}
+
+func (s *GitScanner) getRelevantCommitIter(client *git.Repository) (object.CommitIter, error) {
+	if s.fromRef == plumbing.ZeroHash {
+		headRef, _ := client.Head()
+		if headRef != nil {
+			s.fromRef = headRef.Hash()
+		}
+	}
+
+	var commits object.CommitIter
+	var err error
+
+	if s.fromRef != plumbing.ZeroHash {
+		commits, err = client.Log(&git.LogOptions{From: s.fromRef})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		commits, err = client.CommitObjects()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return commits, err
 }
 
 func (s *GitScanner) processCommit(commit *object.Commit) error {
@@ -90,7 +108,7 @@ func (s *GitScanner) processCommit(commit *object.Commit) error {
 	var ch = make(chan *object.File, 50)
 	var wg sync.WaitGroup
 
-	processes := runtime.NumCPU()/2 - 1
+	processes := int(math.Max(float64(runtime.NumCPU()/2-1), 1))
 	wg.Add(processes)
 	for i := 0; i < processes; i++ {
 		go func() {
@@ -117,12 +135,12 @@ func (s *GitScanner) processCommit(commit *object.Commit) error {
 	close(ch)
 	wg.Wait()
 
-	s.metrics.UpdateCommitsProcessed()
+	s.metrics.IncrementCommitsProcessed()
 	return nil
 }
 
 func (s *GitScanner) processFile(file *object.File) error {
-	s.metrics.UpdateFilesProcessed()
+	s.metrics.IncrementFilesProcessed()
 	if isBin, err := file.IsBinary(); err != nil || isBin {
 		return nil
 	}
@@ -133,29 +151,30 @@ func (s *GitScanner) processFile(file *object.File) error {
 		}
 	}
 
-	if strings.HasSuffix(file.Name, ".zip") {
-		return nil
+	for _, ext := range s.ignoreExtensions {
+		if strings.HasSuffix(file.Name, ext) {
+			return nil
+		}
 	}
-
-	if err := s.mc.Evaluate(file); err == nil {
-		return err
-	}
-	return nil
+	return s.mc.Evaluate(file)
 }
 
-func (s *GitScanner) Exit(printMetrics bool) {
+func (s *GitScanner) Shutdown(printMetrics bool) {
 	if !printMetrics {
+		duration, _ := s.metrics.Duration()
 		fmt.Printf(`
 Processing:
+  duration:     %4.2fs
   commits:      %d
   commit files: %d
 
-Transgressions:
+transgressionMap:
   identified:   %d
   ignored:      %d
   reported:     %d
 
 `,
+			duration,
 			s.metrics.CommitsProcessed,
 			s.metrics.FilesProcessed,
 			s.metrics.TransgressionsFound,
@@ -166,4 +185,8 @@ Transgressions:
 		os.Exit(1)
 	}
 	os.Exit(0)
+}
+
+func (s *GitScanner) GetMetrics() *mertics.Metrics {
+	return s.metrics
 }

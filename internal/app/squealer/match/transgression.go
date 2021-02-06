@@ -6,15 +6,11 @@ import (
 )
 
 type Transgression struct {
-	lineNo         int
-	lineContent    string
-	commit         string
-	committerEmail string
-	committer      string
-	filename       string
-	hash           string
-	match          string
-	redacted       string
+	lineContent string
+	filename    string
+	hash        string
+	match       string
+	redacted    string
 }
 
 func newTransgression(lineContent, filename, match, hash string) Transgression {
@@ -30,7 +26,8 @@ func newTransgression(lineContent, filename, match, hash string) Transgression {
 }
 
 func (t Transgression) String() string {
-	return fmt.Sprintf(`content:  | %s
+	return fmt.Sprintf(`
+content:  | %s
 filename: | %s
 hash:     | %s
 rule:     | %s:%s
@@ -38,7 +35,8 @@ rule:     | %s:%s
 }
 
 func (t Transgression) Redacted() string {
-	return fmt.Sprintf(`content:  | %s
+	return fmt.Sprintf(`
+content:  | %s
 filename: | %s
 hash:     | %s
 rule:     | %s:%s

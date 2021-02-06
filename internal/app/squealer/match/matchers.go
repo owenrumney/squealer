@@ -22,7 +22,7 @@ type Matchers []*Matcher
 type MatcherController struct {
 	matchers       Matchers
 	exclusions     []config.RuleException
-	transgressions *Transgressions
+	transgressions *transgressionMap
 	metrics        *mertics.Metrics
 	redacted       bool
 }
@@ -79,18 +79,18 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 		lineContent := lineInFile(m, lines)
 		secretHash := mc.newHash(m)
 		key := fmt.Sprintf("%s:%s", name, secretHash)
-		mc.metrics.UpdateTransgressionsFound()
+		mc.metrics.IncrementTransgressionsFound()
 		for _, exclusion := range mc.exclusions {
 			if exclusion.ExceptionString == key {
-				mc.metrics.UpdateTransgressionsIgnored()
+				mc.metrics.IncrementTransgressionsIgnored()
 				return
 			}
 		}
 
-		if !mc.transgressions.Exists(key) {
-			mc.metrics.UpdateTransgressionsReported()
+		if !mc.transgressions.exists(key) {
+			mc.metrics.IncrementTransgressionsReported()
 			transgression := newTransgression(lineContent, name, m, secretHash)
-			mc.transgressions.Add(key, transgression)
+			mc.transgressions.add(key, transgression)
 			if mc.redacted {
 				fmt.Printf(transgression.Redacted())
 			} else {

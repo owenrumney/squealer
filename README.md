@@ -11,14 +11,14 @@ The built-in configuration has the following checks;
 AWS
 - access key id
 - access secret key
-- mws key
 
 Github
 - github token
 
 Slack
-- slack token
+- slack token OAUTH
 - webhook url
+
 
 Other
 - Asymmetric Private Key
@@ -50,8 +50,6 @@ rules:
   description: Check for AWS Access Key Id
 - rule: (?i)aws(.{0,20})?(?-i)['\"][0-9a-zA-Z\/+]{40}['\"]
   description: Check for AWS Secret Access Key
-- rule: amzn\.mws\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
-  description: Check for AWS MWS Key
 - rule: (?i)github[_\-\.]?token[\s:,="\]']+?(?-i)[0-9a-zA-Z]{35,40}
   description: Check for Github Token 
 - rule: https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}
