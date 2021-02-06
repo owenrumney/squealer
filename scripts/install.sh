@@ -16,6 +16,5 @@ curl -s -L -H "Accept: application/octet-stream" --user "x:${GITHUB_TOKEN}" "${a
 echo "Installing squealer..."
 chmod +x ./squealer
 mv ./squealer "${GOBIN}/"
-"${GOBIN}/f3" plugin install-core
 which squealer &> /dev/null || (echo "Please add ${GOBIN} to your PATH to complete installation!" && exit 1)
 echo "Installation complete!"

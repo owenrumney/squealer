@@ -25,6 +25,11 @@ Other
 
 Sometimes we have secrets committed to our projects, generally we can invalidate them and move on. If squealer is telling tales about a secret that you are aware of and has been mitigated, you can use the `exception` rule found in the output to register it as ignored.
 
+## Installation
+
+curl -s "https://raw.githubusercontent.com/owenrumney/squealer/main/scripts/install.sh" | bash
+
+
 ## Usage
 
 Squealer is intended to be run either locally or as part of a CI process. 
