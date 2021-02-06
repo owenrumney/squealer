@@ -7,3 +7,4 @@ build: test
 .PHONY: test
 test:
 	go test -v -covermode=atomic -coverpkg ./... -coverprofile coverage.txt ./...
+
