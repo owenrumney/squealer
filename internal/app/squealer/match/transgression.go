@@ -27,18 +27,18 @@ func newTransgression(lineContent, filename, match, hash string) Transgression {
 
 func (t Transgression) String() string {
 	return fmt.Sprintf(`
-content:  | %s
-filename: | %s
-hash:     | %s
-rule:     | %s:%s
+content:      | %s
+filename:     | %s
+hash:         | %s
+exclude rule: | %s:%s
 	`, t.lineContent, t.filename, t.hash, t.filename, t.hash)
 }
 
 func (t Transgression) Redacted() string {
 	return fmt.Sprintf(`
-content:  | %s
-filename: | %s
-hash:     | %s
-rule:     | %s:%s
+content:      | %s
+filename:     | %s
+hash:         | %s
+exclude rule: | %s:%s
 	`, t.redacted, t.filename, t.hash, t.filename, t.hash)
 }
