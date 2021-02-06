@@ -4,6 +4,12 @@
 
 ### Telling tales on you for leaking secrets!
 
+[![Build Status](https://travis-ci.com/owenrumney/squealer.svg?branch=main)](https://travis-ci.com/owenrumney/squealer)
+[![codecov](https://codecov.io/gh/owenrumney/squealer/branch/main/graph/badge.svg?token=2EH55OCCX7)](https://codecov.io/gh/owenrumney/squealer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/owenrumney/squealer)](https://goreportcard.com/report/github.com/owenrumney/squealer)
+[![Github Release](https://img.shields.io/github/release/owenrumney/squealer.svg)](https://github.com/owenrumney/squealer/releases)
+[![GitHub All Releases](https://img.shields.io/github/downloads/owenrumney/squealer/total)](https://github.com/owenrumney/squealer/releases)
+
 Squealer scans a local git repository for secrets that are being leaked deep within the commit history. 
 
 The built-in configuration has the following checks;
