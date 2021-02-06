@@ -19,26 +19,26 @@ type gitScanner struct {
 	metrics          *mertics.Metrics
 	workingDirectory string
 	ignorePaths      []string
-	fromRef          plumbing.Hash
+	fromHash         plumbing.Hash
 	ignoreExtensions []string
 }
 
 func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
-	if _, err := os.Stat(sc.basepath); err != nil {
+	if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
 	}
 	metrics := mertics.NewMetrics()
-	mc := match.NewMatcherController(sc.cfg, metrics, sc.redacted)
+	mc := match.NewMatcherController(sc.Cfg, metrics, sc.Redacted)
 
 	scanner := &gitScanner{
 		mc:               *mc,
 		metrics:          metrics,
-		workingDirectory: sc.basepath,
-		ignorePaths:      sc.cfg.IgnorePrefixes,
-		ignoreExtensions: sc.cfg.IgnoreExtensions,
+		workingDirectory: sc.Basepath,
+		ignorePaths:      sc.Cfg.IgnorePrefixes,
+		ignoreExtensions: sc.Cfg.IgnoreExtensions,
 	}
-	if len(sc.fromRef) > 0 {
-		scanner.fromRef = plumbing.NewHash(sc.fromRef)
+	if len(sc.FromHash) > 0 {
+		scanner.fromHash = plumbing.NewHash(sc.FromHash)
 	}
 
 	return scanner, nil
@@ -63,6 +63,9 @@ func (s *gitScanner) Scan() error {
 				fmt.Println(err.Error())
 			}
 		}(commit)
+		if commit.Hash == s.fromHash {
+			return nil
+		}
 		commit, err = commits.Next()
 	}
 	s.metrics.StopTimer()
@@ -74,18 +77,14 @@ func (s *gitScanner) Scan() error {
 }
 
 func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.CommitIter, error) {
-	if s.fromRef == plumbing.ZeroHash {
-		headRef, _ := client.Head()
-		if headRef != nil {
-			s.fromRef = headRef.Hash()
-		}
-	}
+	headRef, _ := client.Head()
 
 	var commits object.CommitIter
 	var err error
 
-	if s.fromRef != plumbing.ZeroHash {
-		commits, err = client.Log(&git.LogOptions{From: s.fromRef})
+	if headRef != nil {
+
+		commits, err = client.Log(&git.LogOptions{From: headRef.Hash()})
 		if err != nil {
 			return nil, err
 		}

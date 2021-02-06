@@ -11,19 +11,19 @@ import (
 func TestNewScannerIsGitScanner(t *testing.T) {
 	gopath := os.Getenv("GOPATH")
 	sc := ScannerConfig{
-		cfg:      config.DefaultConfig(),
-		basepath: fmt.Sprintf("%s/src/github.com/owenrumney/squealer/", gopath),
+		Cfg:      config.DefaultConfig(),
+		Basepath: fmt.Sprintf("%s/src/github.com/owenrumney/squealer/", gopath),
 	}
 	scanner, err := NewScanner(sc)
-	fmt.Println(sc.basepath)
+	fmt.Println(sc.Basepath)
 	assert.NoError(t, err)
 	assert.IsType(t, &gitScanner{}, scanner)
 }
 
 func TestNewScannerIsDirectoryScanner(t *testing.T) {
 	sc := ScannerConfig{
-		cfg:      config.DefaultConfig(),
-		basepath: "../../../../test_resources",
+		Cfg:      config.DefaultConfig(),
+		Basepath: "../../../../test_resources",
 	}
 	scanner, err := NewScanner(sc)
 

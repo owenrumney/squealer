@@ -39,7 +39,13 @@ func startSquealing(_ *cobra.Command, args []string) {
 		panic(err)
 	}
 
-	scanner, err := scan.NewScanner(scan.NewScannerConfig(basePath, redacted, noGit, cfg))
+	scanner, err := scan.NewScanner(scan.ScannerConfig{
+		Cfg:      cfg,
+		Basepath: basePath,
+		Redacted: redacted,
+		NoGit:    noGit,
+		FromHash: fromHash,
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -80,9 +86,11 @@ transgressionMap:
 }
 
 func main() {
-	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", true, "Display the results redacted")
-	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output")
-	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules")
+	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", true, "Display the results redacted.")
+	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output.")
+	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", false, "Scan as a directory rather than a git history.")
+	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
+	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The starting hash to scan from.")
 
 	listenForExit()
 	if err := rootcmd.Execute(); err != nil {

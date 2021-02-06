@@ -9,20 +9,11 @@ import (
 )
 
 type ScannerConfig struct {
-	cfg      *config.Config
-	basepath string
-	redacted bool
-	fromRef  string
-	noGit    bool
-}
-
-func NewScannerConfig(basepath string, redacted, noGit bool, cfg *config.Config) ScannerConfig {
-	return ScannerConfig{
-		cfg:      cfg,
-		basepath: basepath,
-		redacted: redacted,
-		noGit:    noGit,
-	}
+	Cfg      *config.Config
+	Basepath string
+	Redacted bool
+	NoGit    bool
+	FromHash string
 }
 
 type Scanner interface {
@@ -31,7 +22,7 @@ type Scanner interface {
 }
 
 func NewScanner(sc ScannerConfig) (Scanner, error) {
-	if sc.noGit || notGit(sc.basepath) {
+	if sc.NoGit || notGit(sc.Basepath) {
 		return newDirectoryScanner(sc)
 	}
 	return newGitScanner(sc)
