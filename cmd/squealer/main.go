@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
@@ -21,6 +22,7 @@ var rootcmd = &cobra.Command{
 var (
 	redacted       = false
 	concise        = true
+	noGit          = false
 	configFilePath string
 	fromHash       string
 )
@@ -37,7 +39,7 @@ func startSquealing(_ *cobra.Command, args []string) {
 		panic(err)
 	}
 
-	scanner, err := scan.NewGitScanner(scan.NewScannerConfig(basePath, redacted, cfg))
+	scanner, err := scan.NewScanner(scan.NewScannerConfig(basePath, redacted, noGit, cfg))
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +47,36 @@ func startSquealing(_ *cobra.Command, args []string) {
 	if err != nil {
 		panic(err)
 	}
-	scanner.Shutdown(concise)
+	metrics := scanner.GetMetrics()
+	if !concise {
+		printMetrics(metrics)
+	}
+	if metrics.TransgressionsReported > 0 {
+		os.Exit(1)
+	}
+	os.Exit(0)
+}
+
+func printMetrics(metrics *mertics.Metrics) {
+	duration, _ := metrics.Duration()
+	fmt.Printf(`
+Processing:
+  duration:     %4.2fs
+  commits:      %d
+  commit files: %d
+
+transgressionMap:
+  identified:   %d
+  ignored:      %d
+  reported:     %d
+
+`,
+		duration,
+		metrics.CommitsProcessed,
+		metrics.FilesProcessed,
+		metrics.TransgressionsFound,
+		metrics.TransgressionsIgnored,
+		metrics.TransgressionsReported)
 }
 
 func main() {

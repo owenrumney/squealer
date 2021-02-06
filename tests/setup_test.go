@@ -9,7 +9,8 @@ import (
 var testPath string
 
 func TestMain(t *testing.M) {
-	repo, err := unpackTestRepo("../test_resources/sloppygit.tar")
+	getwd, _ := os.Getwd()
+	repo, err := unpackTestRepo(fmt.Sprintf("%s/../test_resources/sloppygit.tar", getwd))
 	defer func() { _ = os.RemoveAll(repo) }()
 	if err != nil {
 		panic(err)

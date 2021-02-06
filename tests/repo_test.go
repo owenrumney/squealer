@@ -9,7 +9,7 @@ import (
 
 func TestRepoEndToEnd(t *testing.T) {
 
-	scanner, err := scan.NewGitScanner(scan.NewScannerConfig(testPath, true, config.DefaultConfig()))
+	scanner, err := scan.NewScanner(scan.NewScannerConfig(testPath, true, false, config.DefaultConfig()))
 	assert.NoError(t, err)
 
 	err = scanner.Scan()
@@ -21,4 +21,5 @@ func TestRepoEndToEnd(t *testing.T) {
 	assert.Equal(t, int32(8), metrics.TransgressionsFound)
 	assert.Equal(t, int32(0), metrics.TransgressionsIgnored)
 	assert.Equal(t, int32(4), metrics.TransgressionsReported)
+
 }

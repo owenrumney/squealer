@@ -11,11 +11,10 @@ import (
 	"math"
 	"os"
 	"runtime"
-	"strings"
 	"sync"
 )
 
-type GitScanner struct {
+type gitScanner struct {
 	mc               match.MatcherController
 	metrics          *mertics.Metrics
 	workingDirectory string
@@ -24,14 +23,14 @@ type GitScanner struct {
 	ignoreExtensions []string
 }
 
-func NewGitScanner(sc ScannerConfig) (*GitScanner, error) {
+func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 	if _, err := os.Stat(sc.basepath); err != nil {
 		return nil, err
 	}
 	metrics := mertics.NewMetrics()
 	mc := match.NewMatcherController(sc.cfg, metrics, sc.redacted)
 
-	scanner := &GitScanner{
+	scanner := &gitScanner{
 		mc:               *mc,
 		metrics:          metrics,
 		workingDirectory: sc.basepath,
@@ -45,7 +44,7 @@ func NewGitScanner(sc ScannerConfig) (*GitScanner, error) {
 	return scanner, nil
 }
 
-func (s *GitScanner) Scan() error {
+func (s *gitScanner) Scan() error {
 	client, err := git.PlainOpen(s.workingDirectory)
 	if err != nil {
 		return err
@@ -74,7 +73,7 @@ func (s *GitScanner) Scan() error {
 	return nil
 }
 
-func (s *GitScanner) getRelevantCommitIter(client *git.Repository) (object.CommitIter, error) {
+func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.CommitIter, error) {
 	if s.fromRef == plumbing.ZeroHash {
 		headRef, _ := client.Head()
 		if headRef != nil {
@@ -99,7 +98,7 @@ func (s *GitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 	return commits, err
 }
 
-func (s *GitScanner) processCommit(commit *object.Commit) error {
+func (s *gitScanner) processCommit(commit *object.Commit) error {
 	files, err := commit.Files()
 	if err != nil {
 		return err
@@ -139,54 +138,21 @@ func (s *GitScanner) processCommit(commit *object.Commit) error {
 	return nil
 }
 
-func (s *GitScanner) processFile(file *object.File) error {
+func (s *gitScanner) processFile(file *object.File) error {
 	s.metrics.IncrementFilesProcessed()
 	if isBin, err := file.IsBinary(); err != nil || isBin {
 		return nil
 	}
-
-	for _, ignorePath := range s.ignorePaths {
-		if strings.HasPrefix(file.Name, ignorePath) {
-			return nil
-		}
+	if shouldIgnore(file.Name, s.ignorePaths, s.ignoreExtensions) {
+		return nil
 	}
-
-	for _, ext := range s.ignoreExtensions {
-		if strings.HasSuffix(file.Name, ext) {
-			return nil
-		}
+	content, err := file.Contents()
+	if err != nil {
+		return err
 	}
-	return s.mc.Evaluate(file)
+	return s.mc.Evaluate(file.Name, content)
 }
 
-func (s *GitScanner) Shutdown(printMetrics bool) {
-	if !printMetrics {
-		duration, _ := s.metrics.Duration()
-		fmt.Printf(`
-Processing:
-  duration:     %4.2fs
-  commits:      %d
-  commit files: %d
-
-transgressionMap:
-  identified:   %d
-  ignored:      %d
-  reported:     %d
-
-`,
-			duration,
-			s.metrics.CommitsProcessed,
-			s.metrics.FilesProcessed,
-			s.metrics.TransgressionsFound,
-			s.metrics.TransgressionsIgnored,
-			s.metrics.TransgressionsReported)
-	}
-	if s.metrics.TransgressionsReported > 0 {
-		os.Exit(1)
-	}
-	os.Exit(0)
-}
-
-func (s *GitScanner) GetMetrics() *mertics.Metrics {
+func (s *gitScanner) GetMetrics() *mertics.Metrics {
 	return s.metrics
 }
