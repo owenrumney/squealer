@@ -8,4 +8,4 @@ args=(-ldflags "-X github.com/owenrumney/squealer/version.Version=${TAG} -s -w -
 
 GOOS=darwin GOARCH=amd64 go build -o "bin/squealer.darwin.amd64.${TAG}" "${args[@]}" ./cmd/squealer/
 GOOS=linux GOARCH=amd64 go build -o "bin/squealer.linux.amd64.${TAG}" "${args[@]}" ./cmd/squealer/
-GOOS=windows GOARCH=amd64 go build -o "bin/squealer.windows.amd64.exe.${TAG}" "${args[@]}" ./cmd/squealer/
+GOOS=windows GOARCH=amd64 go build -o "bin/squealer.windows.amd64.${TAG}.exe" "${args[@]}" ./cmd/squealer/
