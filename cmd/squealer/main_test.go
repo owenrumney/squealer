@@ -1,8 +1,12 @@
 package main
 
 import (
+	"fmt"
+	"github.com/owenrumney/squealer/internal/app/squealer/config"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/internal/app/squealer/scan"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
@@ -30,4 +34,16 @@ transgressionMap:
   reported:     5
 
 `, output)
+}
+
+func TestNewScannerIsGitScanner(t *testing.T) {
+	gopath := os.Getenv("GOPATH")
+	scanner := getScanner(config.DefaultConfig(), fmt.Sprintf("%s/src/github.com/owenrumney/squealer/", gopath))
+	assert.Equal(t, scan.GitScanner, scanner.GetType())
+}
+
+func TestNewScannerIsDirectoryScanner(t *testing.T) {
+	gopath := os.Getenv("GOPATH")
+	scanner := getScanner(config.DefaultConfig(), fmt.Sprintf("%s/src/github.com/owenrumney/squealer/test_resources", gopath))
+	assert.Equal(t, scan.DirectoryScanner, scanner.GetType())
 }

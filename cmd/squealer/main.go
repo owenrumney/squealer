@@ -39,6 +39,19 @@ func squeal(_ *cobra.Command, args []string) {
 		panic(err)
 	}
 
+	scanner := getScanner(cfg, basePath)
+	err = scanner.Scan()
+	if err != nil {
+		panic(err)
+	}
+	metrics := scanner.GetMetrics()
+	if !concise {
+		fmt.Println(printMetrics(metrics))
+	}
+	os.Exit(int(metrics.TransgressionsReported))
+}
+
+func getScanner(cfg *config.Config, basePath string) scan.Scanner {
 	scanner, err := scan.NewScanner(scan.ScannerConfig{
 		Cfg:      cfg,
 		Basepath: basePath,
@@ -49,15 +62,7 @@ func squeal(_ *cobra.Command, args []string) {
 	if err != nil {
 		panic(err)
 	}
-	err = scanner.Scan()
-	if err != nil {
-		panic(err)
-	}
-	metrics := scanner.GetMetrics()
-	if !concise {
-		fmt.Println(printMetrics(metrics))
-	}
-	os.Exit(int(metrics.TransgressionsReported))
+	return scanner
 }
 
 func printMetrics(metrics *mertics.Metrics) string {

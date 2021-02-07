@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
@@ -42,6 +43,22 @@ func TestYamlConfigLoaded(t *testing.T) {
 	assert.Equal(t, 1, len(config.Exceptions))
 	assert.Equal(t, 2, len(config.IgnorePrefixes))
 	assert.Equal(t, 7, len(config.IgnoreExtensions))
+}
+
+func TestConfigThatDoesntExist(t *testing.T) {
+	config, err := LoadConfig("blah")
+
+	assert.NoError(t, err)
+	assert.Equal(t, DefaultConfig(), config)
+}
+
+func TestConfigTWithMalformedFile(t *testing.T) {
+	gopath := os.Getenv("GOPATH")
+	configFile := fmt.Sprintf("%s/src/github.com/owenrumney/squealer/Dockerfile", gopath)
+
+	config, err := LoadConfig(configFile)
+	assert.Error(t, err)
+	assert.Nil(t, config)
 }
 
 var yamlConfig = `rules:

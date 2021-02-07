@@ -8,6 +8,13 @@ import (
 	"strings"
 )
 
+type ScannerType string
+
+const (
+	GitScanner       ScannerType = "gitScanner"
+	DirectoryScanner ScannerType = "dirScanner"
+)
+
 type ScannerConfig struct {
 	Cfg      *config.Config
 	Basepath string
@@ -19,6 +26,7 @@ type ScannerConfig struct {
 type Scanner interface {
 	Scan() error
 	GetMetrics() *mertics.Metrics
+	GetType() ScannerType
 }
 
 func NewScanner(sc ScannerConfig) (Scanner, error) {

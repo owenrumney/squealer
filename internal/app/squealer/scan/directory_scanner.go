@@ -16,6 +16,10 @@ type directoryScanner struct {
 	ignoreExtensions []string
 }
 
+func (d directoryScanner) GetType() ScannerType {
+	return DirectoryScanner
+}
+
 func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
 	if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
@@ -33,21 +37,16 @@ func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
 }
 
 func (d directoryScanner) Scan() error {
-	if err := filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() || shouldIgnore(path, d.ignorePaths, d.ignoreExtensions) {
 			return nil
 		}
-
 		content, err := ioutil.ReadFile(path)
 		if err != nil {
 			return err
 		}
-
 		return d.mc.Evaluate(path, string(content))
-	}); err != nil {
-		return err
-	}
-	return nil
+	})
 }
 
 func (d directoryScanner) GetMetrics() *mertics.Metrics {

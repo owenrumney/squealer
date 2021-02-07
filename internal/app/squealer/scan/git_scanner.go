@@ -23,6 +23,10 @@ type gitScanner struct {
 	ignoreExtensions []string
 }
 
+func (s *gitScanner) GetType() ScannerType {
+	return GitScanner
+}
+
 func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 	if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
@@ -64,6 +68,7 @@ func (s *gitScanner) Scan() error {
 			}
 		}(commit)
 		if commit.Hash == s.fromHash {
+			// reached the starting commit - stop here
 			return nil
 		}
 		commit, err = commits.Next()
@@ -83,7 +88,6 @@ func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 	var err error
 
 	if headRef != nil {
-
 		commits, err = client.Log(&git.LogOptions{From: headRef.Hash()})
 		if err != nil {
 			return nil, err
