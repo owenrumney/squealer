@@ -15,13 +15,13 @@ import (
 var rootcmd = &cobra.Command{
 	Use:   "squeal",
 	Short: "Search for secrets and squeal about them",
-	Long:  `Start commit searching`,
+	Long:  `Telling tales on your secret leaking`,
 	Run:   squeal,
 }
 
 var (
 	redacted       = false
-	concise        = true
+	concise        = false
 	noGit          = false
 	configFilePath string
 	fromHash       string

@@ -40,15 +40,22 @@ curl -s "https://raw.githubusercontent.com/owenrumney/squealer/main/scripts/inst
 
 Squealer is intended to be run either locally or as part of a CI process. 
 
-### CLI Arguments
+```shell
+./squealer --help
+Telling tales on your secret leaking
 
-#### `--redacted`
+Usage:
+  squeal [flags]
 
-The `--redacted` argument is used to redact the secrets in the report... no point exposing them further 
-
-#### `--config-file`
-
-Squealer will use the built in config unless you override it using the `--config-file` option. This config file should be laid out in the following format
+Flags:
+      --concise              Reduced output.
+      --config-file string   Path to the config file with the rules.
+      --from-hash string     The starting hash to scan from.
+  -h, --help                 this help screen
+      --no-git               Scan as a directory rather than a git history.
+      --redacted             Display the results redacted. 
+```
+### Config File
 
 ```yaml
 rules:
