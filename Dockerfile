@@ -18,7 +18,7 @@ FROM alpine
 USER nobody
 
 # work somewhere where we can write
-COPY --from=build-env /src/squealer /usr/bin/sqealer
+COPY --from=build-env /src/squealer /usr/bin/squealer
 
 # set the default entrypoint -- when this container is run, use this command
 ENTRYPOINT [ "sqealer" ]
