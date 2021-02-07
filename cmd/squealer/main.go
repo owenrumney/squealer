@@ -16,7 +16,7 @@ var rootcmd = &cobra.Command{
 	Use:   "squeal",
 	Short: "Search for secrets and squeal about them",
 	Long:  `Start commit searching`,
-	Run:   startSquealing,
+	Run:   squeal,
 }
 
 var (
@@ -27,7 +27,7 @@ var (
 	fromHash       string
 )
 
-func startSquealing(_ *cobra.Command, args []string) {
+func squeal(_ *cobra.Command, args []string) {
 	var basePath = "./"
 	if len(args) > 0 {
 		basePath = args[0]
@@ -57,10 +57,7 @@ func startSquealing(_ *cobra.Command, args []string) {
 	if !concise {
 		fmt.Println(printMetrics(metrics))
 	}
-	if metrics.TransgressionsReported > 0 {
-		os.Exit(1)
-	}
-	os.Exit(0)
+	os.Exit(int(metrics.TransgressionsReported))
 }
 
 func printMetrics(metrics *mertics.Metrics) string {
