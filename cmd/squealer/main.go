@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"github.com/spf13/cobra"
+	"math"
 	"os"
 	"os/signal"
 	"syscall"
@@ -48,7 +49,10 @@ func squeal(_ *cobra.Command, args []string) {
 	if !concise {
 		fmt.Println(printMetrics(metrics))
 	}
-	os.Exit(int(metrics.TransgressionsReported))
+
+	exitCode := int(math.Min(float64(metrics.TransgressionsReported), 1))
+
+	os.Exit(exitCode)
 }
 
 func getScanner(cfg *config.Config, basePath string) scan.Scanner {
@@ -88,7 +92,7 @@ transgressionMap:
 }
 
 func main() {
-	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", true, "Display the results redacted.")
+	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", false, "Display the results redacted.")
 	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output.")
 	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", false, "Scan as a directory rather than a git history.")
 	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
