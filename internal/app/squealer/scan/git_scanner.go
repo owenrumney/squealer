@@ -42,6 +42,7 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 		ignoreExtensions: sc.Cfg.IgnoreExtensions,
 	}
 	if len(sc.FromHash) > 0 {
+		fmt.Printf("setting the from hash to %s\n", sc.FromHash)
 		scanner.fromHash = plumbing.NewHash(sc.FromHash)
 	}
 
@@ -67,7 +68,8 @@ func (s *gitScanner) Scan() error {
 				fmt.Println(err.Error())
 			}
 		}(commit)
-		if commit.Hash == s.fromHash {
+		if commit.Hash.String() == s.fromHash.String() {
+			fmt.Println("commit hash reached - stopping")
 			// reached the starting commit - stop here
 			return nil
 		}
@@ -88,7 +90,10 @@ func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 	var err error
 
 	if headRef != nil {
-		commits, err = client.Log(&git.LogOptions{From: headRef.Hash()})
+		commits, err = client.Log(&git.LogOptions{
+			From: headRef.Hash(),
+			Order: git.LogOrderCommitterTime,
+		}		)
 		if err != nil {
 			return nil, err
 		}
@@ -102,6 +107,7 @@ func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 }
 
 func (s *gitScanner) processCommit(commit *object.Commit) error {
+
 	files, err := commit.Files()
 	if err != nil {
 		return err
