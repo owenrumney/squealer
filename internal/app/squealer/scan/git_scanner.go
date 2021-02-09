@@ -69,6 +69,7 @@ func (s *gitScanner) Scan() error {
 	}
 
 	s.metrics.StartTimer()
+	defer s.metrics.StopTimer()
 	commit, err := commits.Next()
 	for err == nil && commit != nil {
 		func(c *object.Commit) {
@@ -83,7 +84,6 @@ func (s *gitScanner) Scan() error {
 		}
 		commit, err = commits.Next()
 	}
-	s.metrics.StopTimer()
 
 	if err != nil && err != io.EOF {
 		fmt.Printf("error is not null %s\n", err.Error())
@@ -158,15 +158,14 @@ func (s *gitScanner) processCommit(commit *object.Commit) error {
 		file, err = files.Next()
 	}
 
+	s.metrics.IncrementCommitsProcessed()
 	close(ch)
 	wg.Wait()
-
-	s.metrics.IncrementCommitsProcessed()
 	return nil
 }
 
 func (s *gitScanner) processFile(file *object.File) error {
-	s.metrics.IncrementFilesProcessed()
+
 	if isBin, err := file.IsBinary(); err != nil || isBin {
 		return nil
 	}
@@ -177,7 +176,10 @@ func (s *gitScanner) processFile(file *object.File) error {
 	if err != nil {
 		return err
 	}
-	return s.mc.Evaluate(file.Name, content)
+
+	err = s.mc.Evaluate(file.Name, content)
+	s.metrics.IncrementFilesProcessed()
+	return err
 }
 
 func (s *gitScanner) GetMetrics() *mertics.Metrics {
