@@ -20,7 +20,9 @@ type gitScanner struct {
 	workingDirectory string
 	ignorePaths      []string
 	fromHash         plumbing.Hash
+	toHash           plumbing.Hash
 	ignoreExtensions []string
+	headSet          bool
 }
 
 func (s *gitScanner) GetType() ScannerType {
@@ -44,6 +46,12 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 	if len(sc.FromHash) > 0 {
 		fmt.Printf("setting the from hash to %s\n", sc.FromHash)
 		scanner.fromHash = plumbing.NewHash(sc.FromHash)
+	}
+
+	if len(sc.ToHash) > 0 {
+		fmt.Printf("setting the from hash to %s\n", sc.ToHash)
+		scanner.toHash = plumbing.NewHash(sc.ToHash)
+		scanner.headSet = true
 	}
 
 	return scanner, nil
@@ -84,16 +92,26 @@ func (s *gitScanner) Scan() error {
 }
 
 func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.CommitIter, error) {
-	headRef, _ := client.Head()
+	var headRef plumbing.Hash
+	if s.headSet {
+		headRef = s.toHash
+
+	} else {
+		ref, _ := client.Head()
+		if ref != nil {
+			headRef = ref.Hash()
+		}
+		headRef = plumbing.ZeroHash
+	}
 
 	var commits object.CommitIter
 	var err error
 
-	if headRef != nil {
+	if headRef != plumbing.ZeroHash {
 		commits, err = client.Log(&git.LogOptions{
-			From: headRef.Hash(),
+			From:  headRef,
 			Order: git.LogOrderCommitterTime,
-		}		)
+		})
 		if err != nil {
 			return nil, err
 		}

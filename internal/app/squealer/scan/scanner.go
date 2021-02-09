@@ -21,6 +21,7 @@ type ScannerConfig struct {
 	Redacted bool
 	NoGit    bool
 	FromHash string
+	ToHash   string
 }
 
 type Scanner interface {

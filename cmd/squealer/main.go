@@ -26,6 +26,7 @@ var (
 	noGit          = false
 	configFilePath string
 	fromHash       string
+	toHash         string
 )
 
 func squeal(_ *cobra.Command, args []string) {
@@ -62,6 +63,7 @@ func getScanner(cfg *config.Config, basePath string) scan.Scanner {
 		Redacted: redacted,
 		NoGit:    noGit,
 		FromHash: fromHash,
+		ToHash:   toHash,
 	})
 	if err != nil {
 		panic(err)
@@ -97,6 +99,7 @@ func main() {
 	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", false, "Scan as a directory rather than a git history.")
 	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
 	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The starting hash to scan from.")
+	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", "", "The starting hash to scan from.")
 
 	listenForExit()
 	if err := rootcmd.Execute(); err != nil {
