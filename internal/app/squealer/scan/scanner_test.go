@@ -30,3 +30,17 @@ func TestNewScannerIsDirectoryScanner(t *testing.T) {
 	assert.NoError(t, err)
 	assert.IsType(t, &directoryScanner{}, scanner)
 }
+
+func TestShouldIgnore(t *testing.T) {
+	ignorePaths := []string{"vendor", "npm_modules"}
+	ignoreExtensions := []string{"zip"}
+	assert.True(t, shouldIgnore("/src/scan/vendor/github.com", ignorePaths, ignoreExtensions))
+	assert.True(t, shouldIgnore("/src/scan/npm_modules/github.com", ignorePaths, ignoreExtensions))
+	assert.True(t, shouldIgnore("vendor/github.com", ignorePaths, ignoreExtensions))
+	assert.True(t, shouldIgnore("npm_modules/github.com", ignorePaths, ignoreExtensions))
+	assert.True(t, shouldIgnore("pingu.zip", ignorePaths, ignoreExtensions))
+	assert.False(t, shouldIgnore("src/scan", ignorePaths, ignoreExtensions))
+	assert.False(t, shouldIgnore("test", ignorePaths, ignoreExtensions))
+	assert.False(t, shouldIgnore("govendor", ignorePaths, ignoreExtensions))
+	assert.False(t, shouldIgnore("pingu.honk", ignorePaths, ignoreExtensions))
+}

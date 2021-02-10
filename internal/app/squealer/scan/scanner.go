@@ -2,10 +2,12 @@ package scan
 
 import (
 	"fmt"
+	"os"
+	"regexp"
+	"strings"
+
 	"github.com/owenrumney/squealer/internal/app/squealer/config"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
-	"os"
-	"strings"
 )
 
 type ScannerType string
@@ -48,7 +50,7 @@ func notGit(basepath string) bool {
 
 func shouldIgnore(filename string, ignorePaths []string, ignoreExtensions []string) bool {
 	for _, ignorePath := range ignorePaths {
-		if strings.HasPrefix(filename, ignorePath) {
+		if match, err := regexp.MatchString(fmt.Sprintf(`\b%s\b`, ignorePath), filename); err == nil && match {
 			return true
 		}
 	}
