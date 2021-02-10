@@ -44,12 +44,10 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 		ignoreExtensions: sc.Cfg.IgnoreExtensions,
 	}
 	if len(sc.FromHash) > 0 {
-		fmt.Printf("setting the from hash to %s\n", sc.FromHash)
 		scanner.fromHash = plumbing.NewHash(sc.FromHash)
 	}
 
 	if len(sc.ToHash) > 0 {
-		fmt.Printf("setting the from hash to %s\n", sc.ToHash)
 		scanner.toHash = plumbing.NewHash(sc.ToHash)
 		scanner.headSet = true
 	}
