@@ -45,16 +45,19 @@ Squealer is intended to be run either locally or as part of a CI process.
 Telling tales on your secret leaking
 
 Usage:
-  squeal [flags]
+  squealer [flags]
 
 Flags:
       --concise              Reduced output.
       --config-file string   Path to the config file with the rules.
-      --from-hash string     The starting hash to scan from.
-  -h, --help                 this help screen
+      --from-hash string     The hash to work back to from the starting hash.
+  -h, --help                 help for squealer
       --no-git               Scan as a directory rather than a git history.
-      --redacted             Display the results redacted. 
+      --redacted             Display the results redacted.
+      --to-hash string       The most recent hash to start with.
+
 ```
+
 ### Config File
 
 ```yaml

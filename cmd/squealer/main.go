@@ -14,7 +14,7 @@ import (
 )
 
 var rootcmd = &cobra.Command{
-	Use:   "squeal",
+	Use:   "squealer",
 	Short: "Search for secrets and squeal about them",
 	Long:  `Telling tales on your secret leaking`,
 	Run:   squeal,
@@ -34,8 +34,6 @@ func squeal(_ *cobra.Command, args []string) {
 	if len(args) > 0 {
 		basePath = args[0]
 	}
-	fmt.Printf("scanning %s\n", basePath)
-
 	cfg, err := config.LoadConfig(configFilePath)
 	if err != nil {
 		panic(err)
@@ -98,8 +96,8 @@ func main() {
 	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output.")
 	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", false, "Scan as a directory rather than a git history.")
 	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
-	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The starting hash to scan from.")
-	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", "", "The starting hash to scan from.")
+	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The hash to work back to from the starting hash.")
+	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", "", "The most recent hash to start with.")
 
 	listenForExit()
 	if err := rootcmd.Execute(); err != nil {

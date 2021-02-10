@@ -34,8 +34,10 @@ type Scanner interface {
 
 func NewScanner(sc ScannerConfig) (Scanner, error) {
 	if sc.NoGit || notGit(sc.Basepath) {
+		fmt.Printf("Using a directory scanner to process %s\n", sc.Basepath)
 		return newDirectoryScanner(sc)
 	}
+	fmt.Printf("Using a git scanner to process %s\n", sc.Basepath)
 	return newGitScanner(sc)
 }
 
