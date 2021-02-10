@@ -15,3 +15,6 @@
 # vendor/
 /squealer
 /config.yaml
+
+.idea
+coverage.txt
