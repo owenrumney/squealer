@@ -36,13 +36,13 @@ func squeal(_ *cobra.Command, args []string) {
 	}
 	cfg, err := config.LoadConfig(configFilePath)
 	if err != nil {
-		panic(err)
+		fail(err)
 	}
 
 	scanner := getScanner(cfg, basePath)
 	err = scanner.Scan()
 	if err != nil {
-		panic(err)
+		fail(err)
 	}
 	metrics := scanner.GetMetrics()
 	if !concise {
@@ -64,7 +64,7 @@ func getScanner(cfg *config.Config, basePath string) scan.Scanner {
 		ToHash:   toHash,
 	})
 	if err != nil {
-		panic(err)
+		fail(err)
 	}
 	return scanner
 }
@@ -113,4 +113,9 @@ func listenForExit() {
 		fmt.Println("\r- Exiting")
 		os.Exit(0)
 	}()
+}
+
+func fail(err error) {
+	fmt.Println(err.Error())
+	os.Exit(-1)
 }
