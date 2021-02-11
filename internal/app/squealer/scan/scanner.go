@@ -18,12 +18,13 @@ const (
 )
 
 type ScannerConfig struct {
-	Cfg      *config.Config
-	Basepath string
-	Redacted bool
-	NoGit    bool
-	FromHash string
-	ToHash   string
+	Cfg        *config.Config
+	Basepath   string
+	Redacted   bool
+	NoGit      bool
+	FromHash   string
+	ToHash     string
+	Everything bool
 }
 
 type Scanner interface {
