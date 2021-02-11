@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"math"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/config"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"github.com/owenrumney/squealer/internal/app/squealer/scan"
 )
 
@@ -24,12 +23,24 @@ var (
 	redacted       = false
 	concise        = false
 	noGit          = false
+	debug          = false
+	everything     = false
 	configFilePath string
 	fromHash       string
 	toHash         string
 )
 
+func init() {
+	log.SetFormatter(&log.TextFormatter{})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
+}
+
 func squeal(_ *cobra.Command, args []string) {
+	if debug {
+		log.SetLevel(log.DebugLevel)
+	}
+
 	var basePath = "./"
 	if len(args) > 0 {
 		basePath = args[0]
@@ -51,17 +62,19 @@ func squeal(_ *cobra.Command, args []string) {
 
 	exitCode := int(math.Min(float64(metrics.TransgressionsReported), 1))
 
+	log.Infof("Exit code: %d", exitCode)
 	os.Exit(exitCode)
 }
 
 func getScanner(cfg *config.Config, basePath string) scan.Scanner {
 	scanner, err := scan.NewScanner(scan.ScannerConfig{
-		Cfg:      cfg,
-		Basepath: basePath,
-		Redacted: redacted,
-		NoGit:    noGit,
-		FromHash: fromHash,
-		ToHash:   toHash,
+		Cfg:        cfg,
+		Basepath:   basePath,
+		Redacted:   redacted,
+		NoGit:      noGit,
+		FromHash:   fromHash,
+		ToHash:     toHash,
+		Everything: everything,
 	})
 	if err != nil {
 		fail(err)
@@ -95,24 +108,15 @@ func main() {
 	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", false, "Display the results redacted.")
 	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output.")
 	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", false, "Scan as a directory rather than a git history.")
+	rootcmd.PersistentFlags().BoolVar(&debug, "debug", false, "Include debug output.")
+	rootcmd.PersistentFlags().BoolVar(&everything, "everything", false, "Scan all commits.... everywhere.")
 	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
 	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The hash to work back to from the starting hash.")
 	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", "", "The most recent hash to start with.")
 
-	listenForExit()
 	if err := rootcmd.Execute(); err != nil {
 		fmt.Printf(err.Error())
 	}
-}
-
-func listenForExit() {
-	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-c
-		fmt.Println("\r- Exiting")
-		os.Exit(0)
-	}()
 }
 
 func fail(err error) {

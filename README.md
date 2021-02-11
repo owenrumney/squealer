@@ -50,6 +50,8 @@ Usage:
 Flags:
       --concise              Reduced output.
       --config-file string   Path to the config file with the rules.
+      --debug                Include debug output.
+      --everything           Scan all commits.... everywhere.
       --from-hash string     The hash to work back to from the starting hash.
   -h, --help                 help for squealer
       --no-git               Scan as a directory rather than a git history.

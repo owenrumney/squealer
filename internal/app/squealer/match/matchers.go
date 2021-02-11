@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"regexp"
 	"strings"
 
@@ -58,6 +59,7 @@ func (mc *MatcherController) add(rule config.MatchRule) error {
 }
 
 func (mc *MatcherController) Evaluate(filename, content string) error {
+	log.Debugf("\tfile: %s", filename)
 	for _, matcher := range mc.matchers {
 		if matcher.test.MatchString(content) {
 			mc.addTransgression(&content, filename, matcher)
@@ -87,6 +89,7 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 			transgression := newTransgression(lineContent, name, m, secretHash)
 			mc.transgressions.add(key, transgression)
 			if mc.redacted {
+
 				fmt.Printf(transgression.Redacted())
 			} else {
 				fmt.Printf(transgression.String())
