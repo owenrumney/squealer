@@ -3,6 +3,7 @@
 package scan
 
 import (
+	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"sync"
