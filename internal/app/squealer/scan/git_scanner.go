@@ -1,7 +1,6 @@
 package scan
 
 import (
-	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -92,7 +91,7 @@ func (s *gitScanner) Scan() error {
 				}
 				err := s.processFile(f)
 				if err != nil {
-					fmt.Println(err.Error())
+					log.WithError(err).Error(err.Error())
 				}
 			}
 		}()
@@ -103,10 +102,10 @@ func (s *gitScanner) Scan() error {
 	commit, err := commits.Next()
 	for err == nil && commit != nil {
 		if err := s.processCommit(commit, ch); err != nil {
-			fmt.Println(err.Error())
+			log.WithError(err).Error(err.Error())
 		}
 		if commit.Hash.String() == s.fromHash.String() {
-			fmt.Println("commit hash reached - stopping")
+			log.Info("commit hash reached - stopping")
 			// reached the starting commit - stop here
 			return nil
 		}
@@ -118,8 +117,6 @@ func (s *gitScanner) Scan() error {
 	}
 	return nil
 }
-
-
 
 func (s *gitScanner) processCommit(commit *object.Commit, ch chan *object.File) error {
 
@@ -236,7 +233,7 @@ func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 	var err error
 
 	if headRef != plumbing.ZeroHash {
-		logrus.Infof("Scanning project and starting at hash %s", headRef.String())
+		logrus.Infof("starting at hash %s", headRef.String())
 		commits, err = client.Log(&git.LogOptions{
 			From:  headRef,
 			All:   false,

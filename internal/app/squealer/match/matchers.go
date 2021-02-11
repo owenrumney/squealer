@@ -39,7 +39,7 @@ func NewMatcherController(cfg *config.Config, metrics *mertics.Metrics, redacted
 	for _, rule := range cfg.Rules {
 		err := mc.add(rule)
 		if err != nil {
-			fmt.Println(err.Error())
+			log.WithError(err).Error(err.Error())
 		}
 	}
 

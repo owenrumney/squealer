@@ -15,7 +15,6 @@ func TestNewScannerIsGitScanner(t *testing.T) {
 		Basepath: fmt.Sprintf("%s/src/github.com/owenrumney/squealer/", gopath),
 	}
 	scanner, err := NewScanner(sc)
-	fmt.Println(sc.Basepath)
 	assert.NoError(t, err)
 	assert.IsType(t, &gitScanner{}, scanner)
 }

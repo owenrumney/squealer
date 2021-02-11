@@ -3,7 +3,6 @@
 package scan
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"sync"
@@ -15,7 +14,7 @@ func (s *gitScanner) monitorSignals(processes int, wg sync.WaitGroup) {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		for _ = range c {
-			fmt.Println("\r- Exiting")
+			log.Info("Shutting down workers and exiting...")
 			for i := 0; i < processes; i++ {
 				wg.Done()
 			}

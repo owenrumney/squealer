@@ -115,11 +115,11 @@ func main() {
 	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", "", "The most recent hash to start with.")
 
 	if err := rootcmd.Execute(); err != nil {
-		fmt.Printf(err.Error())
+		fail(err)
 	}
 }
 
 func fail(err error) {
-	fmt.Println(err.Error())
+	log.WithError(err).Error(err.Error())
 	os.Exit(-1)
 }
