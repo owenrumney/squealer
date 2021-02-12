@@ -14,7 +14,7 @@ filename:     | /config.yml
 secret hash:  | sdjn34rf32fds
 commit:       | 
 committer:    |  ()
-committed:    |
+committed:    | 
 exclude rule: | 
 	`, tr.String())
 }
@@ -28,7 +28,7 @@ filename:     | /config.yml
 secret hash:  | sdjn34rf32fds
 commit:       | 
 committer:    |  ()
-committed:    |
+committed:    | 
 exclude rule: | 
 	`, tr.Redacted())
 }
