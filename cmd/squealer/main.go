@@ -55,6 +55,17 @@ func squeal(_ *cobra.Command, args []string) {
 	if err != nil {
 		fail(err)
 	}
+
+	transgressions := scanner.GetTransgressions()
+
+	for _, t := range transgressions {
+		if redacted {
+			fmt.Print(t.Redacted())
+		} else {
+			fmt.Print(t.String())
+		}
+	}
+
 	metrics := scanner.GetMetrics()
 	if !concise {
 		fmt.Println(printMetrics(metrics))

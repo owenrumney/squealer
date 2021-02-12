@@ -45,10 +45,14 @@ func (d directoryScanner) Scan() error {
 		if err != nil {
 			return err
 		}
-		return d.mc.Evaluate(path, string(content))
+		return d.mc.Evaluate(path, string(content), nil)
 	})
 }
 
 func (d directoryScanner) GetMetrics() *mertics.Metrics {
 	return d.metrics
+}
+
+func (s *directoryScanner) GetTransgressions() []match.Transgression {
+	return s.mc.Transgressions()
 }

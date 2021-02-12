@@ -14,6 +14,11 @@ import (
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
 
+type CommitFile struct {
+	commit *object.Commit
+	file   *object.File
+}
+
 type gitScanner struct {
 	mc               match.MatcherController
 	metrics          *mertics.Metrics
@@ -71,7 +76,7 @@ func (s *gitScanner) Scan() error {
 	s.metrics.StartTimer()
 	defer s.metrics.StopTimer()
 
-	var ch = make(chan *object.File, 50)
+	var ch = make(chan CommitFile, 50)
 	var wg sync.WaitGroup
 
 	defer func() {
@@ -84,12 +89,12 @@ func (s *gitScanner) Scan() error {
 	for i := 0; i < processes; i++ {
 		go func() {
 			for {
-				f, ok := <-ch
+				cf, ok := <-ch
 				if !ok {
 					wg.Done()
 					return
 				}
-				err := s.processFile(f)
+				err := s.processFile(cf)
 				if err != nil {
 					log.WithError(err).Error(err.Error())
 				}
@@ -118,7 +123,7 @@ func (s *gitScanner) Scan() error {
 	return nil
 }
 
-func (s *gitScanner) processCommit(commit *object.Commit, ch chan *object.File) error {
+func (s *gitScanner) processCommit(commit *object.Commit, ch chan CommitFile) error {
 
 	log.Debugf("commit: %s", commit.Hash.String())
 	if len(commit.ParentHashes) == 0 {
@@ -127,7 +132,7 @@ func (s *gitScanner) processCommit(commit *object.Commit, ch chan *object.File) 
 			return err
 		}
 		err = files.ForEach(func(file *object.File) error {
-			ch <- file
+			ch <- CommitFile{commit, file}
 			return nil
 		})
 		return err
@@ -164,7 +169,7 @@ func (s *gitScanner) processCommit(commit *object.Commit, ch chan *object.File) 
 			continue
 		}
 
-		ch <- toFile
+		ch <- CommitFile{commit, toFile}
 	}
 
 	return nil
@@ -181,7 +186,8 @@ func (s *gitScanner) cleanTree(tree *object.Tree) {
 	tree.Entries = cleanEntries
 }
 
-func (s *gitScanner) processFile(file *object.File) error {
+func (s *gitScanner) processFile(cf CommitFile) error {
+	file := cf.file
 	if file == nil {
 		return nil
 	}
@@ -197,13 +203,17 @@ func (s *gitScanner) processFile(file *object.File) error {
 		return err
 	}
 
-	err = s.mc.Evaluate(file.Name, content)
+	err = s.mc.Evaluate(file.Name, content, cf.commit)
 	s.metrics.IncrementFilesProcessed()
 	return err
 }
 
 func (s *gitScanner) GetMetrics() *mertics.Metrics {
 	return s.metrics
+}
+
+func (s *gitScanner) GetTransgressions() []match.Transgression {
+	return s.mc.Transgressions()
 }
 
 func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.CommitIter, error) {

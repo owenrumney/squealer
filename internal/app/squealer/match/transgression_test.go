@@ -11,8 +11,10 @@ func TestTransgressionOutputString(t *testing.T) {
 	assert.Equal(t, `
 content:      | password=Password1234
 filename:     | /config.yml
-hash:         | sdjn34rf32fds
-exclude rule: | /config.yml:sdjn34rf32fds
+secret hash:  | sdjn34rf32fds
+commit:       | 
+committer:    |  ()
+exclude rule: | 
 	`, tr.String())
 }
 
@@ -22,8 +24,10 @@ func TestTransgressionOutputRedacted(t *testing.T) {
 	assert.Equal(t, `
 content:      | password=REDACTED
 filename:     | /config.yml
-hash:         | sdjn34rf32fds
-exclude rule: | /config.yml:sdjn34rf32fds
+secret hash:  | sdjn34rf32fds
+commit:       | 
+committer:    |  ()
+exclude rule: | 
 	`, tr.Redacted())
 }
 

@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	log "github.com/sirupsen/logrus"
 	"regexp"
 	"strings"
@@ -58,17 +59,17 @@ func (mc *MatcherController) add(rule config.MatchRule) error {
 	return nil
 }
 
-func (mc *MatcherController) Evaluate(filename, content string) error {
+func (mc *MatcherController) Evaluate(filename, content string, commit *object.Commit) error {
 	log.Debugf("\tfile: %s", filename)
 	for _, matcher := range mc.matchers {
 		if matcher.test.MatchString(content) {
-			mc.addTransgression(&content, filename, matcher)
+			mc.addTransgression(&content, filename, matcher, commit)
 		}
 	}
 	return nil
 }
 
-func (mc *MatcherController) addTransgression(content *string, name string, matcher *Matcher) {
+func (mc *MatcherController) addTransgression(content *string, name string, matcher *Matcher, commit *object.Commit) {
 	lines := strings.Split(*content, "\n")
 
 	m := matcher.test.FindString(*content)
@@ -86,14 +87,9 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 
 		if !mc.transgressions.exists(key) {
 			mc.metrics.IncrementTransgressionsReported()
-			transgression := newTransgression(lineContent, name, m, secretHash)
+			transgression := newTransgression(lineContent, name, m, secretHash, commit)
 			mc.transgressions.add(key, transgression)
-			if mc.redacted {
-
-				fmt.Printf(transgression.Redacted())
-			} else {
-				fmt.Printf(transgression.String())
-			}
+			log.Debugf("recording transgression in commit: %s", transgression.commitHash)
 		}
 	}
 }
@@ -103,6 +99,15 @@ func (mc *MatcherController) newHash(secret string) string {
 	hasher.Write([]byte(secret))
 	hash := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 	return hash
+}
+
+func (mc *MatcherController) Transgressions() []Transgression {
+	var transgressions []Transgression
+
+	for _, t := range mc.transgressions.internal {
+		transgressions = append(transgressions, *t)
+	}
+	return transgressions
 }
 
 func lineInFile(m string, lines []string) string {

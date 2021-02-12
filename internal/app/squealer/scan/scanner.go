@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/config"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
 
@@ -31,6 +32,7 @@ type ScannerConfig struct {
 type Scanner interface {
 	Scan() error
 	GetMetrics() *mertics.Metrics
+	GetTransgressions() []match.Transgression
 	GetType() ScannerType
 }
 
