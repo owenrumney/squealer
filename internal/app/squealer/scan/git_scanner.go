@@ -15,8 +15,9 @@ import (
 )
 
 type CommitFile struct {
-	commit *object.Commit
-	file   *object.File
+	commit     *object.Commit
+	file       *object.File
+	changePath string
 }
 
 type gitScanner struct {
@@ -132,7 +133,7 @@ func (s *gitScanner) processCommit(commit *object.Commit, ch chan CommitFile) er
 			return err
 		}
 		err = files.ForEach(func(file *object.File) error {
-			ch <- CommitFile{commit, file}
+			ch <- CommitFile{commit, file, ""}
 			return nil
 		})
 		return err
@@ -169,7 +170,7 @@ func (s *gitScanner) processCommit(commit *object.Commit, ch chan CommitFile) er
 			continue
 		}
 
-		ch <- CommitFile{commit, toFile}
+		ch <- CommitFile{commit, toFile, change.To.Name}
 	}
 
 	return nil
@@ -195,7 +196,7 @@ func (s *gitScanner) processFile(cf CommitFile) error {
 	if isBin, err := file.IsBinary(); err != nil || isBin {
 		return nil
 	}
-	if shouldIgnore(file.Name, s.ignorePaths, s.ignoreExtensions) {
+	if shouldIgnore(cf.changePath, s.ignorePaths, s.ignoreExtensions) {
 		return nil
 	}
 	content, err := file.Contents()
@@ -203,7 +204,7 @@ func (s *gitScanner) processFile(cf CommitFile) error {
 		return err
 	}
 
-	err = s.mc.Evaluate(file.Name, content, cf.commit)
+	err = s.mc.Evaluate(cf.changePath, content, cf.commit)
 	s.metrics.IncrementFilesProcessed()
 	return err
 }
