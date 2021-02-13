@@ -36,7 +36,7 @@ func DefaultConfig() *Config {
 				Description: "Slack OAuth Token",
 			},
 		},
-		IgnorePrefixes: []string{
+		IgnorePaths: []string{
 			"vendor",
 			"node_modules",
 		},

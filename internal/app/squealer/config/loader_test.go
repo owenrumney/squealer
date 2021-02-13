@@ -26,7 +26,7 @@ func TestJsonConfigLoaded(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 7, len(config.Rules))
 	assert.Equal(t, 1, len(config.Exceptions))
-	assert.Equal(t, 2, len(config.IgnorePrefixes))
+	assert.Equal(t, 2, len(config.IgnorePaths))
 	assert.Equal(t, 7, len(config.IgnoreExtensions))
 }
 
@@ -41,7 +41,7 @@ func TestYamlConfigLoaded(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 7, len(config.Rules))
 	assert.Equal(t, 1, len(config.Exceptions))
-	assert.Equal(t, 2, len(config.IgnorePrefixes))
+	assert.Equal(t, 2, len(config.IgnorePaths))
 	assert.Equal(t, 7, len(config.IgnoreExtensions))
 }
 
@@ -76,7 +76,7 @@ var yamlConfig = `rules:
   description: Check for Slack token
 - rule: '-----BEGIN ((EC|PGP|DSA|RSA|OPENSSH) )?PRIVATE KEY( BLOCK)?-----'
   description: Check for Private Asymetric Key
-ignore_prefixes:
+ignore_paths:
 - vendor
 - node_modules
 ignore_extensions:
@@ -123,7 +123,7 @@ var jsonConfig = `
       "description": "Check for Private Asymetric Key"
     }
   ],
-  "ignore_prefixes": [
+  "ignore_paths": [
     "vendor",
     "node_modules"
   ],
