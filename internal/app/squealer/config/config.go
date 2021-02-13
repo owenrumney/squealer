@@ -2,7 +2,7 @@ package config
 
 type Config struct {
 	Rules            []MatchRule     `yaml:"rules" json:"rules"`
-	IgnorePrefixes   []string        `yaml:"ignore_prefixes" json:"ignore_prefixes"`
+	IgnorePaths   []string        `yaml:"ignore_paths" json:"ignore_paths"`
 	IgnoreExtensions []string        `yaml:"ignore_extensions" json:"ignore_extensions"`
 	Exceptions       []RuleException `yaml:"exceptions" json:"exceptions"`
 }

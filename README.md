@@ -76,7 +76,7 @@ rules:
   description: Check for Slack token
 - rule: '-----BEGIN ((EC|PGP|DSA|RSA|OPENSSH) )?PRIVATE KEY( BLOCK)?-----'
   description: Check for Private Asymetric Key
-ignore_prefixes:
+ignore_paths:
 - vendor
 - node_modules
 ignore_extensions:
@@ -100,9 +100,9 @@ The config file is made up of the `rules`, `ignore_prefixes`, `ignore_extensions
 
 Rules define the regular expression that is used to detect the secret. Requires a description for posterity.
 
-#### ignore_prefixes
+#### ignore_paths
 
-Ignore prefixes are folders that you don't want to look ing - generally `vendor` and the like.
+Ignore paths are folders that you don't want to look ing - generally `vendor` and the like.
 
 #### ignore_extensions
 

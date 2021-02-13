@@ -47,7 +47,7 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 		mc:               *mc,
 		metrics:          metrics,
 		workingDirectory: sc.Basepath,
-		ignorePaths:      sc.Cfg.IgnorePrefixes,
+		ignorePaths:      sc.Cfg.IgnorePaths,
 		ignoreExtensions: sc.Cfg.IgnoreExtensions,
 		everything:       sc.Everything,
 	}
