@@ -15,7 +15,7 @@ func TestRepoEndToEnd(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	err = scanner.Scan()
+	_, err = scanner.Scan()
 	assert.NoError(t, err)
 
 	metrics := scanner.GetMetrics()
@@ -33,7 +33,7 @@ func TestDirEndToEnd(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	err = scanner.Scan()
+	_, err = scanner.Scan()
 	assert.NoError(t, err)
 
 	metrics := scanner.GetMetrics()
@@ -52,7 +52,7 @@ func TestRepoEndToEndWithEverything(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	err = scanner.Scan()
+	_, err = scanner.Scan()
 	assert.NoError(t, err)
 
 	metrics := scanner.GetMetrics()

@@ -19,10 +19,18 @@ func TestAddItemToTransgressionMap(t *testing.T) {
 	assert.Equal(t, 0, tm.count())
 
 	tm.add("test1", Transgression{
-		lineContent: "testing",
-		filename:    "",
-		hash:        "",
-		match:       "",
-		redacted:    "",
+		LineContent:     "testing",
+		Filename:        "",
+		Hash:            "",
+		Match:           "",
+		RedactedContent: "",
+	})
+
+	tm.add("test1", Transgression{
+		LineContent:     "testing2",
+		Filename:        "",
+		Hash:            "",
+		Match:           "",
+		RedactedContent: "",
 	})
 }

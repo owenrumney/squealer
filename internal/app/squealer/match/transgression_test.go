@@ -5,40 +5,34 @@ import (
 	"testing"
 )
 
-func TestTransgressionOutputString(t *testing.T) {
-	tr := createTestTransgression()
+func TestTransgressionUpdate(t *testing.T) {
+	t1 := createTestTransgression("Joe Bloggs", "joe@bloggs.com", "2001-01-01", "abcd")
+	t2 := createTestTransgression("Thom Thumb", "joe@bloggs.com", "2001-12-01", "1234")
 
-	assert.Equal(t, `
-content:      | password=Password1234
-filename:     | /config.yml
-secret hash:  | sdjn34rf32fds
-commit:       | 
-committer:    |  ()
-committed:    | 
-exclude rule: | 
-	`, tr.String())
+	assert.Equal(t, "Joe Bloggs", t1.Committer)
+	assert.Equal(t, "joe@bloggs.com", t1.CommitterEmail)
+	assert.Equal(t, "2001-01-01", t1.Committed)
+	assert.Equal(t, "abcd", t1.CommitHash)
+
+	t1.update(t2)
+
+	assert.Equal(t, "Thom Thumb", t1.Committer)
+	assert.Equal(t, "joe@bloggs.com", t1.CommitterEmail)
+	assert.Equal(t, "2001-12-01", t1.Committed)
+	assert.Equal(t, "1234", t1.CommitHash)
+
 }
 
-func TestTransgressionOutputRedacted(t *testing.T) {
-	tr := createTestTransgression()
-
-	assert.Equal(t, `
-content:      | password=REDACTED
-filename:     | /config.yml
-secret hash:  | sdjn34rf32fds
-commit:       | 
-committer:    |  ()
-committed:    | 
-exclude rule: | 
-	`, tr.Redacted())
-}
-
-func createTestTransgression() Transgression {
+func createTestTransgression(committer, committerEmail, committed, commitHash string) Transgression {
 	return Transgression{
-		lineContent: "password=Password1234",
-		filename:    "/config.yml",
-		hash:        "sdjn34rf32fds",
-		match:       "Password1234",
-		redacted:    "password=REDACTED",
+		LineContent:     "password=Password1234",
+		Filename:        "/config.yml",
+		Hash:            "sdjn34rf32fds",
+		Match:           "Password1234",
+		RedactedContent: "password=REDACTED",
+		CommitterEmail:  committerEmail,
+		Committer:       committer,
+		CommitHash:      commitHash,
+		Committed:       committed,
 	}
 }

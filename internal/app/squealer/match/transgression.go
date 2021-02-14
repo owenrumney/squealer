@@ -7,16 +7,16 @@ import (
 )
 
 type Transgression struct {
-	lineContent    string
-	filename       string
-	hash           string
-	match          string
-	redacted       string
-	committer      string
-	committerEmail string
-	commitHash     string
-	excludeRule    string
-	committed      string
+	LineContent     string
+	Filename        string
+	Hash            string
+	Match           string
+	RedactedContent string
+	Committer       string
+	CommitterEmail  string
+	CommitHash      string
+	ExcludeRule     string
+	Committed       string
 }
 
 func newTransgression(lineContent, filename, match, hash string, commit *object.Commit) Transgression {
@@ -34,46 +34,23 @@ func newTransgression(lineContent, filename, match, hash string, commit *object.
 	}
 
 	return Transgression{
-		lineContent:    content,
-		filename:       filename,
-		hash:           hash,
-		match:          match,
-		redacted:       strings.ReplaceAll(content, match, "REDACTED"),
-		committer:      committerName,
-		committerEmail: committerEmail,
-		committed:      when,
-		commitHash:     commitHash,
-		excludeRule:    fmt.Sprintf("%s:%s", filename, hash),
+		LineContent:     content,
+		Filename:        filename,
+		Hash:            hash,
+		Match:           match,
+		RedactedContent: strings.ReplaceAll(content, match, "REDACTED"),
+		Committer:       committerName,
+		CommitterEmail:  committerEmail,
+		Committed:       when,
+		CommitHash:      commitHash,
+		ExcludeRule:     fmt.Sprintf("%s:%s", filename, hash),
 	}
 }
 
-func (t Transgression) String() string {
-	return fmt.Sprintf(`
-content:      | %s
-filename:     | %s
-secret hash:  | %s
-commit:       | %s
-committer:    | %s (%s)
-committed:    | %s
-exclude rule: | %s
-	`, t.lineContent, t.filename, t.hash, t.commitHash, t.committer, t.committerEmail, t.committed, t.excludeRule)
-}
-
-func (t Transgression) Redacted() string {
-	return fmt.Sprintf(`
-content:      | %s
-filename:     | %s
-secret hash:  | %s
-commit:       | %s
-committer:    | %s (%s)
-committed:    | %s
-exclude rule: | %s
-	`, t.redacted, t.filename, t.hash, t.commitHash, t.committer, t.committerEmail, t.committed, t.excludeRule)
-}
 
 func (t *Transgression) update(t2 Transgression) {
-	t.committer = t2.committer
-	t.committerEmail = t2.committerEmail
-	t.commitHash = t2.commitHash
-	t.committed = t2.committed
+	t.Committer = t2.Committer
+	t.CommitterEmail = t2.CommitterEmail
+	t.CommitHash = t2.CommitHash
+	t.Committed = t2.Committed
 }

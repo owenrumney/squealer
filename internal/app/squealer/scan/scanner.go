@@ -30,9 +30,8 @@ type ScannerConfig struct {
 }
 
 type Scanner interface {
-	Scan() error
+	Scan() ([]match.Transgression, error)
 	GetMetrics() *mertics.Metrics
-	GetTransgressions() []match.Transgression
 	GetType() ScannerType
 }
 
