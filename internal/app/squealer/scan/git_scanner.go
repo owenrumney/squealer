@@ -63,15 +63,15 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 	return scanner, nil
 }
 
-func (s *gitScanner) Scan() error {
+func (s *gitScanner) Scan() ([]match.Transgression, error) {
 	client, err := git.PlainOpen(s.workingDirectory)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	commits, err := s.getRelevantCommitIter(client)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	s.metrics.StartTimer()
@@ -113,7 +113,7 @@ func (s *gitScanner) Scan() error {
 		if commit.Hash.String() == s.fromHash.String() {
 			log.Info("commit hash reached - stopping")
 			// reached the starting commit - stop here
-			return nil
+			return nil, nil
 		}
 		commit, err = commits.Next()
 		s.metrics.IncrementCommitsProcessed()
@@ -121,7 +121,7 @@ func (s *gitScanner) Scan() error {
 	if err != nil && err != io.EOF {
 		logrus.WithError(err).Error("error was not null or an EOF")
 	}
-	return nil
+	return s.mc.Transgressions(), nil
 }
 
 func (s *gitScanner) processCommit(commit *object.Commit, ch chan CommitFile) error {
@@ -211,10 +211,6 @@ func (s *gitScanner) processFile(cf CommitFile) error {
 
 func (s *gitScanner) GetMetrics() *mertics.Metrics {
 	return s.metrics
-}
-
-func (s *gitScanner) GetTransgressions() []match.Transgression {
-	return s.mc.Transgressions()
 }
 
 func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.CommitIter, error) {

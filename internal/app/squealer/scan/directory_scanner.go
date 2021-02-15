@@ -36,8 +36,8 @@ func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
 	return scanner, nil
 }
 
-func (d directoryScanner) Scan() error {
-	return filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
+func (d directoryScanner) Scan() ([]match.Transgression, error) {
+	return nil, filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() || shouldIgnore(path, d.ignorePaths, d.ignoreExtensions) {
 			return nil
 		}
@@ -51,8 +51,4 @@ func (d directoryScanner) Scan() error {
 
 func (d directoryScanner) GetMetrics() *mertics.Metrics {
 	return d.metrics
-}
-
-func (s *directoryScanner) GetTransgressions() []match.Transgression {
-	return s.mc.Transgressions()
 }

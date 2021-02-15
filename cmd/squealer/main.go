@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/config"
+	"github.com/owenrumney/squealer/internal/app/squealer/formatters"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"github.com/owenrumney/squealer/internal/app/squealer/scan"
 )
@@ -28,6 +29,7 @@ var (
 	configFilePath string
 	fromHash       string
 	toHash         string
+	format         string
 )
 
 func init() {
@@ -37,6 +39,10 @@ func init() {
 }
 
 func squeal(_ *cobra.Command, args []string) {
+	if concise {
+		log.SetLevel(log.FatalLevel)
+	}
+
 	if debug {
 		log.SetLevel(log.DebugLevel)
 	}
@@ -51,20 +57,17 @@ func squeal(_ *cobra.Command, args []string) {
 	}
 
 	scanner := getScanner(cfg, basePath)
-	err = scanner.Scan()
+	transgressions, err := scanner.Scan()
 	if err != nil {
 		fail(err)
 	}
 
-	transgressions := scanner.GetTransgressions()
-
-	for _, t := range transgressions {
-		if redacted {
-			fmt.Print(t.Redacted())
-		} else {
-			fmt.Print(t.String())
-		}
+	output, err := formatters.GetFormatter(format).PrintTransgressions(transgressions, redacted)
+	if err != nil {
+		log.WithError(err).Error(err.Error())
 	}
+
+	fmt.Printf(output)
 
 	metrics := scanner.GetMetrics()
 	if !concise {
@@ -124,6 +127,7 @@ func main() {
 	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
 	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The hash to work back to from the starting hash.")
 	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", "", "The most recent hash to start with.")
+	rootcmd.PersistentFlags().StringVar(&format, "output-format", "", "The format that the output should come in (default, json, sarif.")
 
 	if err := rootcmd.Execute(); err != nil {
 		fail(err)
