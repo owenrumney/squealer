@@ -21,6 +21,7 @@ type committer struct {
 type transgressionBlock struct {
 	Content     string    `json:"content"`
 	Filename    string    `json:"filename"`
+	LineNo      int       `json:"line_number"`
 	Hash        string    `json:"secret_hash"`
 	Match       string    `json:"match_string"`
 	Committer   committer `json:"committer"`
@@ -41,6 +42,7 @@ func (j JsonFormatter) PrintTransgressions(transgressions []match.Transgression,
 		tb = append(tb, transgressionBlock{
 			Content:  content,
 			Filename: t.Filename,
+			LineNo:   t.LineNo,
 			Hash:     t.Hash,
 			Match:    t.Match,
 			Committer: committer{

@@ -12,24 +12,26 @@ func TestDefaultFormatterOutput(t *testing.T) {
 
 	plainText, _ := DefaultFormatter{}.PrintTransgressions(trans, false)
 	assert.Equal(t, `
-content:      | password=Password1234
+Content:      | password=Password1234
 Filename:     | /config.yml
-secret Hash:  | sdjn34rf32fds
-commit:       | abcd123456efg
+Line No:      | 10
+Secret Hash:  | sdjn34rf32fds
+Commit:       | abcd123456efg
 Committer:    | Joe Bloggs (joe@bloggs.com)
 Committed:    | 2001-01-01
-exclude rule: | 
+Exclude rule: | 
 `, plainText)
 
 	redacted, _ := DefaultFormatter{}.PrintTransgressions(trans, true)
 	assert.Equal(t, `
-content:      | password=REDACTED
+Content:      | password=REDACTED
 Filename:     | /config.yml
-secret Hash:  | sdjn34rf32fds
-commit:       | abcd123456efg
+Line No:      | 10
+Secret Hash:  | sdjn34rf32fds
+Commit:       | abcd123456efg
 Committer:    | Joe Bloggs (joe@bloggs.com)
 Committed:    | 2001-01-01
-exclude rule: | 
+Exclude rule: | 
 `, redacted)
 
 }

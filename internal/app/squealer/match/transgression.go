@@ -17,9 +17,10 @@ type Transgression struct {
 	CommitHash      string
 	ExcludeRule     string
 	Committed       string
+	LineNo          int
 }
 
-func newTransgression(lineContent, filename, match, hash string, commit *object.Commit) Transgression {
+func newTransgression(lineNo int, lineContent, filename, match, hash string, commit *object.Commit) Transgression {
 	content := strings.TrimSpace(lineContent)
 
 	commitHash := "-- not applicable --"
@@ -34,6 +35,7 @@ func newTransgression(lineContent, filename, match, hash string, commit *object.
 	}
 
 	return Transgression{
+		LineNo:          lineNo,
 		LineContent:     content,
 		Filename:        filename,
 		Hash:            hash,
@@ -47,10 +49,11 @@ func newTransgression(lineContent, filename, match, hash string, commit *object.
 	}
 }
 
-
 func (t *Transgression) update(t2 Transgression) {
 	t.Committer = t2.Committer
 	t.CommitterEmail = t2.CommitterEmail
 	t.CommitHash = t2.CommitHash
 	t.Committed = t2.Committed
+	t.LineContent = t2.LineContent
+	t.LineNo = t2.LineNo
 }

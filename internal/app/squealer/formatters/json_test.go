@@ -16,6 +16,7 @@ func TestJsonFormatterOutput(t *testing.T) {
     {
       "content": "password=Password1234",
       "filename": "/config.yml",
+      "line_number": 10,
       "secret_hash": "sdjn34rf32fds",
       "match_string": "Password1234",
       "committer": {
@@ -35,6 +36,7 @@ func TestJsonFormatterOutput(t *testing.T) {
     {
       "content": "password=REDACTED",
       "filename": "/config.yml",
+      "line_number": 10,
       "secret_hash": "sdjn34rf32fds",
       "match_string": "Password1234",
       "committer": {

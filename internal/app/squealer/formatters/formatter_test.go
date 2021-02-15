@@ -16,6 +16,7 @@ func TestGetFormatter(t *testing.T) {
 
 func createTestTransgression(committer, committerEmail, committed, commitHash string) match.Transgression {
 	return match.Transgression{
+		LineNo:          10,
 		LineContent:     "password=Password1234",
 		Filename:        "/config.yml",
 		Hash:            "sdjn34rf32fds",
