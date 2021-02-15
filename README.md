@@ -48,16 +48,16 @@ Usage:
   squealer [flags]
 
 Flags:
-      --concise              Reduced output.
-      --config-file string   Path to the config file with the rules.
-      --debug                Include debug output.
-      --everything           Scan all commits.... everywhere.
-      --from-hash string     The hash to work back to from the starting hash.
-  -h, --help                 help for squealer
-      --no-git               Scan as a directory rather than a git history.
-      --redacted             Display the results redacted.
-      --to-hash string       The most recent hash to start with.
-
+      --concise                Reduced output.
+      --config-file string     Path to the config file with the rules.
+      --debug                  Include debug output.
+      --everything             Scan all commits.... everywhere.
+      --from-hash string       The hash to work back to from the starting hash.
+  -h, --help                   help for squealer
+      --no-git                 Scan as a directory rather than a git history.
+      --output-format string   The format that the output should come in (default, json, sarif.
+      --redacted               Display the results redacted.
+      --to-hash string         The most recent hash to start with.
 ```
 
 ### Config File
@@ -115,22 +115,43 @@ Exceptions are the entries that you've already handled and don't want to be repo
 ## Example Output
 
 ```shell
-squealer /home/owen/go/src/github.com/owenrumney/go-github-pr-commenter     
-                            
-scanning /home/owen/go/src/github.com/owenrumney/go-github-pr-commenter
+INFO[0000] Using a git scanner to process ../../tfsec/tfsec
+INFO[0000] starting at hash 3bd04e7e17f2aad9e5f38826d88325798534a289
 
-Process took 0.084771843
+Content:      | access_key = "AKIAABCD12ABCDEF1ABC"
+Filename:     | internal/app/tfsec/checks/aws044.go
+Line No:      | 21
+Secret Hash:  | bcE9jU2WV11OYs63eGHPZf1l9v8=
+Commit:       | 4e68e1c5b3bc66982e4b7e6c5cc1c1642c87f83d
+Committer:    | GitHub (noreply@github.com)
+Committed:    | 2020-10-21 21:59:22 +0100 +0100
+Exclude rule: | internal/app/tfsec/checks/aws044.go:bcE9jU2WV11OYs63eGHPZf1l9v8=
+
+Content:      | access_key = "AKIAABCD12ABCDEF1ABC"
+Filename:     | docs-website/docs/aws/AWS044.md
+Line No:      | 26
+Secret Hash:  | bcE9jU2WV11OYs63eGHPZf1l9v8=
+Commit:       | 8a7715f2cf5a2ac74a1e186792c476fd52ee1474
+Committer:    | ¨Owen Rumney (owen.rumney@form3.tech)
+Committed:    | 2021-01-24 19:04:27 +0000 +0000
+Exclude rule: | docs-website/docs/aws/AWS044.md:bcE9jU2WV11OYs63eGHPZf1l9v8=
 
 Processing:
-  commits:      25
-  commit files: 291
+  duration:     2.99s
+  commits:      503
+  commit files: 4095
 
-Transgressions:
-  identified:   0
+transgressionMap:
+  identified:   6
   ignored:      0
-  reported:     0
+  reported:     2
+
+
+INFO[0002] Exit code: 1
 
 ```
+
+It's worth noting that these are known because they're examples in the documentation for tfsec - I can add them to the `config.yaml` as exclusions y using the `Exclude rule`
 
 ## Credits
 
