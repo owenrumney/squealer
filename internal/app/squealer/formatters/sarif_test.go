@@ -56,7 +56,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
                   "index": 0
                 },
                 "region": {
-                  "startLine": 1,
+                  "startLine": 10,
                   "startColumn": 1
                 }
               }
@@ -114,7 +114,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
                   "index": 0
                 },
                 "region": {
-                  "startLine": 1,
+                  "startLine": 10,
                   "startColumn": 1
                 }
               }

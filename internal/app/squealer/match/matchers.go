@@ -74,7 +74,7 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 
 	m := matcher.test.FindString(*content)
 	if len(m) > 0 {
-		lineContent := lineInFile(m, lines)
+		lineNo, lineContent := lineInFile(m, lines)
 		secretHash := mc.newHash(m)
 		key := fmt.Sprintf("%s:%s", name, secretHash)
 		mc.metrics.IncrementTransgressionsFound()
@@ -87,7 +87,7 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 
 		if !mc.transgressions.exists(key) {
 			mc.metrics.IncrementTransgressionsReported()
-			transgression := newTransgression(lineContent, name, m, secretHash, commit)
+			transgression := newTransgression(lineNo, lineContent, name, m, secretHash, commit)
 			mc.transgressions.add(key, transgression)
 			log.Debugf("recording transgression in commit: %s", transgression.CommitHash)
 		}
@@ -110,11 +110,11 @@ func (mc *MatcherController) Transgressions() []Transgression {
 	return transgressions
 }
 
-func lineInFile(m string, lines []string) string {
-	for _, line := range lines {
+func lineInFile(m string, lines []string) (int, string) {
+	for i, line := range lines {
 		if strings.Contains(line, m) {
-			return line
+			return i + 1, line
 		}
 	}
-	return ""
+	return -1, ""
 }

@@ -31,7 +31,7 @@ func (s SarifFormatter) PrintTransgressions(transgressions []match.Transgression
 		result := run.AddResult(rule.Id).
 			WithMessage(fmt.Sprintf("found transgression [%s], secret hashs [%s]", content, t.Hash)).
 			WithLevel("error").
-			WithLocationDetails(t.Filename, 1, 1)
+			WithLocationDetails(t.Filename, t.LineNo, 1)
 
 		run.AddResultDetails(rule, result, t.Filename)
 	}
