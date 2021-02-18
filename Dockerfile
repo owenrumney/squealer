@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine  AS build-env
+FROM golang:1.16.0-alpine  AS build-env
 
 ARG squealer_version=0.0.0
 
