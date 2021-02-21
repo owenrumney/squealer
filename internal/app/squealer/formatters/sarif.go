@@ -28,7 +28,7 @@ func (s SarifFormatter) PrintTransgressions(transgressions []match.Transgression
 			WithDescription("There should be no sensitive data stored in the repository").
 			WithHelp("Add exclude rules to the config for squealer to ignore. Exclude rules take the format filename:hash")
 
-		result := run.AddResult(rule.Id).
+		result := run.AddResult(rule.ID).
 			WithMessage(fmt.Sprintf("found transgression [%s], secret hashs [%s]", content, t.Hash)).
 			WithLevel("error").
 			WithLocationDetails(t.Filename, t.LineNo, 1)
