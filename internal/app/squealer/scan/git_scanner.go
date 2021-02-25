@@ -75,8 +75,10 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 	var useCommitShaList = false
 
 	if s.commitListFile != "" {
+		logrus.Debug("limiting the commit list check")
 		s.commitShas, _ = s.processSpecificCommits()
 		useCommitShaList = len(s.commitShas) > 0
+		logrus.Debugf("processing commits... %v", s.commitShas)
 	}
 
 	commits, err := s.getRelevantCommitIter(client)
