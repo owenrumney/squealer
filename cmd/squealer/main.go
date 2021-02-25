@@ -34,7 +34,7 @@ var (
 
 func init() {
 	log.SetFormatter(&log.TextFormatter{})
-	log.SetOutput(os.Stdout)
+	log.SetOutput(os.Stderr)
 	log.SetLevel(log.InfoLevel)
 }
 

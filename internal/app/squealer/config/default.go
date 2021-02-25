@@ -32,7 +32,7 @@ func DefaultConfig() *Config {
 				Description: "Slack API Token",
 			},
 			{
-				Rule:        `xox.-[0-9]{12}-[0-9]{12}-[0-9a-zA-Z]{24}`,
+				Rule:        `xox.-[0-9]{12}-[0-9]{12}-[r0-9a-zA-Z]{24}`,
 				Description: "Slack OAuth Token",
 			},
 		},
