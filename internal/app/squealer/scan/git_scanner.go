@@ -78,7 +78,7 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 		logrus.Debug("limiting the commit list check")
 		s.commitShas, _ = s.processSpecificCommits()
 		useCommitShaList = len(s.commitShas) > 0
-		logrus.Debugf("processing commits... %v", s.commitShas)
+		logrus.Debug("commit limited to %d commits", len(s.commitShas))
 	}
 
 	commits, err := s.getRelevantCommitIter(client)
@@ -293,7 +293,9 @@ func (s *gitScanner) processSpecificCommits() (map[string]bool, error) {
 
 	var commitShas = make(map[string]bool)
 	for r.Scan() {
-		commitShas[r.Text()] = true
+		c := r.Text()
+		logrus.Debugf("adding commit limit to %s", c)
+		commitShas[c] = true
 	}
 	return commitShas, nil
 }
