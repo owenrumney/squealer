@@ -1,6 +1,7 @@
 package scan
 
 import (
+	"bufio"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -30,6 +31,8 @@ type gitScanner struct {
 	ignoreExtensions []string
 	headSet          bool
 	everything       bool
+	commitListFile   string
+	commitShas       map[string]bool
 }
 
 func (s *gitScanner) GetType() ScannerType {
@@ -50,6 +53,7 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 		ignorePaths:      sc.Cfg.IgnorePaths,
 		ignoreExtensions: sc.Cfg.IgnoreExtensions,
 		everything:       sc.Everything,
+		commitListFile:   sc.CommitListFile,
 	}
 	if len(sc.FromHash) > 0 {
 		scanner.fromHash = plumbing.NewHash(sc.FromHash)
@@ -67,6 +71,12 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 	client, err := git.PlainOpen(s.workingDirectory)
 	if err != nil {
 		return nil, err
+	}
+	var useCommitShaList = false
+
+	if s.commitListFile != "" {
+		s.commitShas, _ = s.processSpecificCommits()
+		useCommitShaList = len(s.commitShas) > 0
 	}
 
 	commits, err := s.getRelevantCommitIter(client)
@@ -107,6 +117,11 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 
 	commit, err := commits.Next()
 	for err == nil && commit != nil {
+
+		if useCommitShaList && s.isNotValidCommit(commit.Hash.String()) {
+			commit, err = commits.Next()
+			continue
+		}
 		if err := s.processCommit(commit, ch); err != nil {
 			log.WithError(err).Error(err.Error())
 		}
@@ -257,4 +272,32 @@ func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 		}
 	}
 	return commits, err
+}
+
+func (s *gitScanner) processSpecificCommits() (map[string]bool, error) {
+	if _, err := os.Stat(s.commitListFile); err != nil {
+		return nil, err
+	}
+
+	file, err := os.Open(s.commitListFile)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() { _ = file.Close() }()
+
+	r := bufio.NewScanner(file)
+	r.Split(bufio.ScanLines)
+
+	var commitShas = make(map[string]bool)
+	for r.Scan() {
+		commitShas[r.Text()] = true
+	}
+	return commitShas, nil
+}
+
+func (s *gitScanner) isNotValidCommit(commitSha string) bool {
+	logrus.Tracef("Checking validity of commit %s", commitSha)
+	_, ok := s.commitShas[commitSha]
+	return !ok
 }

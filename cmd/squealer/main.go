@@ -29,6 +29,7 @@ var (
 	configFilePath string
 	fromHash       string
 	toHash         string
+	commitListFile string
 	format         string
 )
 
@@ -71,7 +72,7 @@ func squeal(_ *cobra.Command, args []string) {
 
 	metrics := scanner.GetMetrics()
 	if !concise {
-		fmt.Println(printMetrics(metrics))
+		_, _ = fmt.Fprint(os.Stderr, printMetrics(metrics))
 	}
 
 	exitCode := int(math.Min(float64(metrics.TransgressionsReported), 1))
@@ -82,13 +83,14 @@ func squeal(_ *cobra.Command, args []string) {
 
 func getScanner(cfg *config.Config, basePath string) scan.Scanner {
 	scanner, err := scan.NewScanner(scan.ScannerConfig{
-		Cfg:        cfg,
-		Basepath:   basePath,
-		Redacted:   redacted,
-		NoGit:      noGit,
-		FromHash:   fromHash,
-		ToHash:     toHash,
-		Everything: everything,
+		Cfg:            cfg,
+		Basepath:       basePath,
+		Redacted:       redacted,
+		NoGit:          noGit,
+		FromHash:       fromHash,
+		ToHash:         toHash,
+		Everything:     everything,
+		CommitListFile: commitListFile,
 	})
 	if err != nil {
 		fail(err)
@@ -119,15 +121,16 @@ transgressionMap:
 }
 
 func main() {
-	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", false, "Display the results redacted.")
-	rootcmd.PersistentFlags().BoolVar(&concise, "concise", false, "Reduced output.")
-	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", false, "Scan as a directory rather than a git history.")
-	rootcmd.PersistentFlags().BoolVar(&debug, "debug", false, "Include debug output.")
-	rootcmd.PersistentFlags().BoolVar(&everything, "everything", false, "Scan all commits.... everywhere.")
-	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", "", "Path to the config file with the rules.")
-	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", "", "The hash to work back to from the starting hash.")
-	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", "", "The most recent hash to start with.")
-	rootcmd.PersistentFlags().StringVar(&format, "output-format", "", "The format that the output should come in (default, json, sarif.")
+	rootcmd.PersistentFlags().BoolVar(&redacted, "redacted", redacted, "Display the results redacted.")
+	rootcmd.PersistentFlags().BoolVar(&concise, "concise", concise, "Reduced output.")
+	rootcmd.PersistentFlags().BoolVar(&noGit, "no-git", noGit, "Scan as a directory rather than a git history.")
+	rootcmd.PersistentFlags().BoolVar(&debug, "debug", debug, "Include debug output.")
+	rootcmd.PersistentFlags().BoolVar(&everything, "everything", everything, "Scan all commits.... everywhere.")
+	rootcmd.PersistentFlags().StringVar(&configFilePath, "config-file", configFilePath, "Path to the config file with the rules.")
+	rootcmd.PersistentFlags().StringVar(&fromHash, "from-hash", fromHash, "The hash to work back to from the starting hash.")
+	rootcmd.PersistentFlags().StringVar(&toHash, "to-hash", toHash, "The most recent hash to start with.")
+	rootcmd.PersistentFlags().StringVar(&format, "output-format", format, "The format that the output should come in (default, json, sarif.")
+	rootcmd.PersistentFlags().StringVar(&commitListFile, "commits-file", commitListFile, "Provide a file with the commits to check per line (git rev-list master..HEAD)")
 
 	if err := rootcmd.Execute(); err != nil {
 		fail(err)
