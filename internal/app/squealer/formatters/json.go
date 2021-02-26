@@ -31,7 +31,7 @@ type transgressionBlock struct {
 }
 
 func (j JsonFormatter) PrintTransgressions(transgressions []match.Transgression, redacted bool) (string, error) {
-	tb := make([]transgressionBlock, len(transgressions))
+	var tb []transgressionBlock
 
 	for _, t := range transgressions {
 		var content = t.LineContent
@@ -53,6 +53,10 @@ func (j JsonFormatter) PrintTransgressions(transgressions []match.Transgression,
 			Committed:   t.Committed,
 			ExcludeRule: t.ExcludeRule,
 		})
+	}
+
+	if tb == nil {
+		tb = []transgressionBlock{}
 	}
 
 	tBlock := &transgressionsBlock{
