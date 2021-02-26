@@ -12,6 +12,10 @@ type SarifFormatter struct {
 }
 
 func (s SarifFormatter) PrintTransgressions(transgressions []match.Transgression, redacted bool) (string, error) {
+	if len(transgressions) == 0 {
+		return "", nil
+	}
+
 	report, err := sarif.New(sarif.Version210)
 	if err != nil {
 		return "", err

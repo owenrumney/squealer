@@ -92,11 +92,6 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 	var ch = make(chan CommitFile, 50)
 	var wg sync.WaitGroup
 
-	defer func() {
-		close(ch)
-		wg.Wait()
-	}()
-
 	processes := 5
 	wg.Add(processes)
 	for i := 0; i < processes; i++ {
@@ -138,6 +133,9 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 	if err != nil && err != io.EOF {
 		logrus.WithError(err).Error("error was not null or an EOF")
 	}
+
+	close(ch)
+	wg.Wait()
 	return s.mc.Transgressions(), nil
 }
 
