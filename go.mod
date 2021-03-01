@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/go-git/go-git/v5 v5.2.0
-	github.com/owenrumney/go-sarif v0.0.6
+	github.com/owenrumney/go-sarif v0.0.7
 	github.com/sirupsen/logrus v1.8.0
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.7.0
