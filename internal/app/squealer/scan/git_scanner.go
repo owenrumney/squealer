@@ -219,7 +219,12 @@ func (s *gitScanner) processFile(cf CommitFile) error {
 		return err
 	}
 
-	err = s.mc.Evaluate(cf.changePath, content, cf.commit)
+	filepath := cf.changePath
+	if filepath == "" {
+		filepath = cf.file.Name
+	}
+
+	err = s.mc.Evaluate(filepath, content, cf.commit)
 	s.metrics.IncrementFilesProcessed()
 	return err
 }
