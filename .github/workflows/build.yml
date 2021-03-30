@@ -4,6 +4,7 @@ on:
     branches:
       - master
   pull_request:
+  
 jobs:
   build:
     name: building squealer
@@ -11,9 +12,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        path: /src/github.com/owenrumney/squealer
-        
+  
     - uses: actions/setup-go@v2
       with:
         stable: 'false'
@@ -22,3 +21,4 @@ jobs:
     
     - name: Run test
       run: make test
+      
