@@ -11,6 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        path: /src/github.com/owenrumney/squealer
     
     - uses: actions/setup-go@v2
       with:
