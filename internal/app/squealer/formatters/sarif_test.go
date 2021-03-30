@@ -1,8 +1,9 @@
 package formatters
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
 )
@@ -11,7 +12,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
 	trans := []match.Transgression{createTestTransgression("Joe Bloggs", "joe@bloggs.com", "2001-01-01", "abcd123456efg")}
 
 	plainText, _ := SarifFormatter{}.PrintTransgressions(trans, false)
-	assert.Equal(t, `{
+	expected := `{
   "version": "2.1.0",
   "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
   "runs": [
@@ -37,17 +38,18 @@ func TestSarifFormmaterOutput(t *testing.T) {
         {
           "location": {
             "uri": "/config.yml"
-          }
+          },
+          "length": 0
         }
       ],
       "results": [
         {
+          "ruleId": "sdjn34rf32fds",
+          "ruleIndex": 0,
           "level": "error",
           "message": {
             "text": "found transgression [password=Password1234], secret hashs [sdjn34rf32fds]"
           },
-          "ruleId": "sdjn34rf32fds",
-          "ruleIndex": 0,
           "locations": [
             {
               "physicalLocation": {
@@ -66,10 +68,11 @@ func TestSarifFormmaterOutput(t *testing.T) {
       ]
     }
   ]
-}`, plainText)
+}`
+	assert.Equal(t, expected, plainText)
 
 	redacted, _ := SarifFormatter{}.PrintTransgressions(trans, true)
-	assert.Equal(t, `{
+	expected = `{
   "version": "2.1.0",
   "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
   "runs": [
@@ -95,17 +98,18 @@ func TestSarifFormmaterOutput(t *testing.T) {
         {
           "location": {
             "uri": "/config.yml"
-          }
+          },
+          "length": 0
         }
       ],
       "results": [
         {
+          "ruleId": "sdjn34rf32fds",
+          "ruleIndex": 0,
           "level": "error",
           "message": {
             "text": "found transgression [password=REDACTED], secret hashs [sdjn34rf32fds]"
           },
-          "ruleId": "sdjn34rf32fds",
-          "ruleIndex": 0,
           "locations": [
             {
               "physicalLocation": {
@@ -124,5 +128,6 @@ func TestSarifFormmaterOutput(t *testing.T) {
       ]
     }
   ]
-}`, redacted)
+}`
+	assert.Equal(t, expected, redacted)
 }
