@@ -39,9 +39,6 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Release Docs
-      run: make publish-docs
-    
     - uses: docker-practice/actions-setup-docker@master
     - run: |
         set -x
