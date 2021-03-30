@@ -3,6 +3,7 @@
 set -e
 
 IMAGE=owenrumney/squealer
+docker login -u $DOCKER_USERNAME --password $DOCKER_PASSWORD
 
 echo "building ${IMAGE}..."
 docker build --build-arg squealer_version=${TRAVIS_TAG} -t ${IMAGE} .
