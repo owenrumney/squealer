@@ -1,11 +1,11 @@
 package config
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEmptyConfigPathReturnsDefault(t *testing.T) {
@@ -52,11 +52,11 @@ func TestConfigThatDoesntExist(t *testing.T) {
 	assert.Equal(t, DefaultConfig(), config)
 }
 
-func TestConfigTWithMalformedFile(t *testing.T) {
-	gopath := os.Getenv("GOPATH")
-	configFile := fmt.Sprintf("%s/src/github.com/owenrumney/squealer/Dockerfile", gopath)
+func TestConfigWithMalformedFile(t *testing.T) {
+	file, err := ioutil.TempFile(os.TempDir(), "junk")
+	assert.NoError(t, err)
 
-	config, err := LoadConfig(configFile)
+	config, err := LoadConfig(file.Name())
 	assert.Error(t, err)
 	assert.Nil(t, config)
 }

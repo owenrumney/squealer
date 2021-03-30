@@ -2,17 +2,23 @@ package scan
 
 import (
 	"fmt"
-	"github.com/owenrumney/squealer/internal/app/squealer/config"
-	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/owenrumney/squealer/internal/app/squealer/config"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewScannerIsGitScanner(t *testing.T) {
-	gopath := os.Getenv("GOPATH")
+	tempdir, err := ioutil.TempDir("/tmp", "test")
+	assert.NoError(t, err)
+	dir := fmt.Sprintf("%s/.git", tempdir)
+	os.MkdirAll(dir, 0600)
+
 	sc := ScannerConfig{
 		Cfg:      config.DefaultConfig(),
-		Basepath: fmt.Sprintf("%s/src/github.com/owenrumney/squealer/", gopath),
+		Basepath: tempdir,
 	}
 	scanner, err := NewScanner(sc)
 	assert.NoError(t, err)

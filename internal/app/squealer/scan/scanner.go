@@ -2,10 +2,11 @@ package scan
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"regexp"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/config"
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
@@ -49,12 +50,12 @@ func notGit(basepath string) bool {
 	log.Debugf("checking if there is a git repository")
 	if stat, err := os.Stat(basepath); err == nil && stat != nil {
 		gitPath := fmt.Sprintf("%s/.git", basepath)
-		if _, ok := os.Stat(gitPath); ok == nil {
+		if _, ok := os.Stat(gitPath); ok != nil {
 			log.Debugf("could not find the git path: %s", gitPath)
-			return false
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 func shouldIgnore(filename string, ignorePaths []string, ignoreExtensions []string) bool {
