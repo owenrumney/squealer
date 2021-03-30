@@ -70,9 +70,6 @@ github.com/inconshreveable/mousetrap
 github.com/jbenet/go-context/io
 # github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd
 github.com/kevinburke/ssh_config
-# github.com/magefile/mage v1.10.0
-github.com/magefile/mage/mg
-github.com/magefile/mage/sh
 # github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
 # github.com/owenrumney/go-sarif v0.0.8
@@ -83,7 +80,7 @@ github.com/owenrumney/go-sarif/sarif
 github.com/pmezard/go-difflib/difflib
 # github.com/sergi/go-diff v1.1.0
 github.com/sergi/go-diff/diffmatchpatch
-# github.com/sirupsen/logrus v1.8.0
+# github.com/sirupsen/logrus v1.8.1
 ## explicit
 github.com/sirupsen/logrus
 # github.com/spf13/cobra v1.1.3
