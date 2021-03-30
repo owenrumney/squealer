@@ -2,14 +2,15 @@ package scan
 
 import (
 	"bufio"
+	"io"
+	"os"
+	"sync"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
-	"io"
-	"os"
-	"sync"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
@@ -211,17 +212,18 @@ func (s *gitScanner) processFile(cf CommitFile) error {
 	if isBin, err := file.IsBinary(); err != nil || isBin {
 		return nil
 	}
-	if shouldIgnore(cf.changePath, s.ignorePaths, s.ignoreExtensions) {
+
+	filepath := cf.changePath
+	if filepath == "" {
+		filepath = cf.file.Name
+	}
+
+	if shouldIgnore(filepath, s.ignorePaths, s.ignoreExtensions) {
 		return nil
 	}
 	content, err := file.Contents()
 	if err != nil {
 		return err
-	}
-
-	filepath := cf.changePath
-	if filepath == "" {
-		filepath = cf.file.Name
 	}
 
 	err = s.mc.Evaluate(filepath, content, cf.commit)
