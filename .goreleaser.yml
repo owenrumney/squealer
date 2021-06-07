@@ -1,0 +1,59 @@
+before:
+  hooks:
+    - go mod tidy
+    - go mod vendor
+builds:
+  -
+    id: squealer
+    main: ./cmd/squealer
+    binary: squealer
+    ldflags:
+    - "-X github.com/owenrumney/squealer/version.Version={{.Version}} -s -w -extldflags '-fno-PIC -static'"
+    env:
+      - CGO_ENABLED=0
+      - GOFLAGS=-mod=vendor
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+
+
+checksum:
+  name_template: '{{ .ProjectName }}_checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+archives:
+  -
+    format: binary
+    name_template: "{{ .Binary}}-{{ .Os }}-{{ .Arch }}"
+
+release:
+  github:
+    owner: owenrumney
+    name: squealer
+
+dockers:
+  - 
+    goos: linux
+    goarch: amd64
+    ids:
+    - squealer
+
+    dockerfile: Dockerfile
+    image_templates:
+    - "owenrumney/squealer:latest"
+    - "owenrumney/squealer:{{ .Tag }}"
+    - "owenrumney/squealer:v{{ .Major }}.{{ .Minor }}"
+
+  

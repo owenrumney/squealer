@@ -19,3 +19,4 @@
 .idea
 coverage.txt
 bin
+dist/
