@@ -3,6 +3,7 @@ package formatters
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/owenrumney/go-sarif/sarif"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
@@ -21,7 +22,7 @@ func (s SarifFormatter) PrintTransgressions(transgressions []match.Transgression
 		return "", err
 	}
 
-	run := report.AddRun("squealer", "https://github.com/owenrumney/squealer")
+	run := sarif.NewRun("squealer", "https://github.com/owenrumney/squealer")
 
 	for _, t := range transgressions {
 		var content = t.LineContent
@@ -32,13 +33,33 @@ func (s SarifFormatter) PrintTransgressions(transgressions []match.Transgression
 			WithDescription("There should be no sensitive data stored in the repository").
 			WithHelp("Add exclude rules to the config for squealer to ignore. Exclude rules take the format filename:hash")
 
-		result := run.AddResult(rule.ID).
-			WithMessage(fmt.Sprintf("found transgression [%s], secret hashs [%s]", content, t.Hash)).
-			WithLevel("error").
-			WithLocationDetails(t.Filename, t.LineNo, 1)
+		run.AddDistinctArtifact(t.Filename)
 
-		run.AddResultDetails(rule, result, t.Filename)
+		result := run.AddResult(rule.ID).
+			WithMessage(sarif.NewTextMessage(fmt.Sprintf("found transgression [%s], secret hashs [%s]", content, t.Hash))).
+			WithLevel("error").
+			WithLocation(
+				sarif.NewLocationWithPhysicalLocation(
+					sarif.NewPhysicalLocation().
+						WithArtifactLocation(
+							sarif.NewSimpleArtifactLocation(t.Filename),
+						).WithRegion(
+						sarif.NewRegion().
+							WithStartLine(t.LineNo).
+							WithStartColumn(1),
+					),
+				),
+			)
+
+		pb := sarif.NewPropertyBag()
+		pb.Add("commit", t.CommitHash)
+		pb.Add("committed", t.Committed)
+		pb.Add("committer", t.Committer)
+		result.AttachPropertyBag(pb)
+
 	}
+
+	report.AddRun(run)
 
 	var buf bytes.Buffer
 	if err = report.PrettyWrite(&buf); err != nil {

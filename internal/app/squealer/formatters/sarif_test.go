@@ -14,7 +14,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
 	plainText, _ := SarifFormatter{}.PrintTransgressions(trans, false)
 	expected := `{
   "version": "2.1.0",
-  "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
   "runs": [
     {
       "tool": {
@@ -39,13 +39,12 @@ func TestSarifFormmaterOutput(t *testing.T) {
           "location": {
             "uri": "/config.yml"
           },
-          "length": 0
+          "length": -1
         }
       ],
       "results": [
         {
           "ruleId": "sdjn34rf32fds",
-          "ruleIndex": 0,
           "level": "error",
           "message": {
             "text": "found transgression [password=Password1234], secret hashs [sdjn34rf32fds]"
@@ -54,8 +53,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "/config.yml",
-                  "index": 0
+                  "uri": "/config.yml"
                 },
                 "region": {
                   "startLine": 10,
@@ -63,18 +61,24 @@ func TestSarifFormmaterOutput(t *testing.T) {
                 }
               }
             }
-          ]
+          ],
+          "properties": {
+            "commit": "abcd123456efg",
+            "committed": "2001-01-01",
+            "committer": "Joe Bloggs"
+          }
         }
       ]
     }
   ]
 }`
+	// fmt.Printf(plainText)
 	assert.Equal(t, expected, plainText)
 
 	redacted, _ := SarifFormatter{}.PrintTransgressions(trans, true)
 	expected = `{
   "version": "2.1.0",
-  "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
   "runs": [
     {
       "tool": {
@@ -99,13 +103,12 @@ func TestSarifFormmaterOutput(t *testing.T) {
           "location": {
             "uri": "/config.yml"
           },
-          "length": 0
+          "length": -1
         }
       ],
       "results": [
         {
           "ruleId": "sdjn34rf32fds",
-          "ruleIndex": 0,
           "level": "error",
           "message": {
             "text": "found transgression [password=REDACTED], secret hashs [sdjn34rf32fds]"
@@ -114,8 +117,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "/config.yml",
-                  "index": 0
+                  "uri": "/config.yml"
                 },
                 "region": {
                   "startLine": 10,
@@ -123,11 +125,17 @@ func TestSarifFormmaterOutput(t *testing.T) {
                 }
               }
             }
-          ]
+          ],
+          "properties": {
+            "commit": "abcd123456efg",
+            "committed": "2001-01-01",
+            "committer": "Joe Bloggs"
+          }
         }
       ]
     }
   ]
 }`
+	// fmt.Printf(redacted)
 	assert.Equal(t, expected, redacted)
 }
