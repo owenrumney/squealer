@@ -36,7 +36,7 @@ changelog:
 archives:
   -
     format: binary
-    name_template: "{{ .Binary}}-{{ .Os }}-{{ .Arch }}"
+    name_template: "{{ .Binary}}.{{ .Os }}.{{ .Arch }}"
 
 release:
   github:
