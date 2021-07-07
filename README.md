@@ -153,6 +153,41 @@ INFO[0002] Exit code: 1
 
 It's worth noting that these are known because they're examples in the documentation for tfsec - I can add them to the `config.yaml` as exclusions y using the `Exclude rule`
 
+
+## Using as a library
+
+Squealer can be used for scanning a specific string using either the default config or by passing your own file in.
+
+### Adding the library
+
+```
+go get -u github.com/owenrumney/squealer
+```
+
+### Using the code
+
+```golang
+import (
+	"fmt"
+
+	"github.com/owenrumney/squealer/pkg/squealer"
+)
+
+func main() {
+
+  // create a new scanner (optionally load your own config in)
+	scanner := squealer.NewStringScanner()
+	testString := `password = "superSecretPassword"`
+
+  // scan the string and if a transgression is found, report it.
+	if result := scanner.Scan(testString); result.TransgressionFound {
+		fmt.Printf("found an issue in [%s]. %s\n", testString, result.Description)
+	}
+}
+
+```
+
+
 ## Credits
 
 [Image by Derangedmisfit](https://derangedmisfit.newgrounds.com/)

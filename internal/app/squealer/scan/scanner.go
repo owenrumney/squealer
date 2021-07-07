@@ -8,9 +8,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/config"
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/pkg/config"
 )
 
 type ScannerType string
@@ -18,6 +18,7 @@ type ScannerType string
 const (
 	GitScanner       ScannerType = "gitScanner"
 	DirectoryScanner ScannerType = "dirScanner"
+	StringScanner    ScannerType = "stringScanner"
 )
 
 type ScannerConfig struct {

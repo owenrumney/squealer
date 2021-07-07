@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 	"math"
 	"os"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/config"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+
 	"github.com/owenrumney/squealer/internal/app/squealer/formatters"
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"github.com/owenrumney/squealer/internal/app/squealer/scan"
+	"github.com/owenrumney/squealer/pkg/config"
 )
 
 var rootcmd = &cobra.Command{
