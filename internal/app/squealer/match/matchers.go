@@ -4,13 +4,15 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
-	"github.com/go-git/go-git/v5/plumbing/object"
-	log "github.com/sirupsen/logrus"
 	"regexp"
 	"strings"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/config"
+	"github.com/go-git/go-git/v5/plumbing/object"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/pkg/config"
+	"github.com/owenrumney/squealer/pkg/result"
 )
 
 type Matcher struct {
@@ -67,6 +69,15 @@ func (mc *MatcherController) Evaluate(filename, content string, commit *object.C
 		}
 	}
 	return nil
+}
+
+func (mc *MatcherController) EvaluateString(content string) result.StringScanResult {
+	for _, matcher := range mc.matchers {
+		if matcher.test.MatchString(content) {
+			return result.NewTransgressionResult(matcher.description)
+		}
+	}
+	return result.CleanResult
 }
 
 func (mc *MatcherController) addTransgression(content *string, name string, matcher *Matcher, commit *object.Commit) {
