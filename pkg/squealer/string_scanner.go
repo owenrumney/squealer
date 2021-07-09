@@ -6,22 +6,22 @@ import (
 	"github.com/owenrumney/squealer/pkg/result"
 )
 
-type stringScanner struct {
+type StringScanner struct {
 	mc match.MatcherController
 }
 
-func NewStringScanner() *stringScanner {
+func NewStringScanner() *StringScanner {
 	return NewStringScannerWithConfig(config.DefaultConfig())
 }
 
-func NewStringScannerWithConfig(conf *config.Config) *stringScanner {
+func NewStringScannerWithConfig(conf *config.Config) *StringScanner {
 	mc := match.NewMatcherController(conf, nil, true)
 
-	return &stringScanner{
+	return &StringScanner{
 		mc: *mc,
 	}
 }
 
-func (s stringScanner) Scan(content string) result.StringScanResult {
+func (s StringScanner) Scan(content string) result.StringScanResult {
 	return s.mc.EvaluateString(content)
 }
