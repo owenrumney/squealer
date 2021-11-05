@@ -1,10 +1,11 @@
 package tests
 
 import (
-	"github.com/owenrumney/squealer/internal/app/squealer/config"
-	"github.com/owenrumney/squealer/internal/app/squealer/scan"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/owenrumney/squealer/internal/app/squealer/scan"
+	"github.com/owenrumney/squealer/pkg/config"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRepoEndToEnd(t *testing.T) {
