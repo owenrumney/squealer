@@ -31,7 +31,9 @@ Sometimes we have secrets committed to our projects, generally we can invalidate
 
 ## Installation
 
+```bash
 curl -s "https://raw.githubusercontent.com/owenrumney/squealer/main/scripts/install.sh" | bash
+```
 
 
 ## Usage
