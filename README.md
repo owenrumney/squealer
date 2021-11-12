@@ -8,7 +8,7 @@
 [![Github Release](https://img.shields.io/github/release/owenrumney/squealer.svg)](https://github.com/owenrumney/squealer/releases)
 [![GitHub All Releases](https://img.shields.io/github/downloads/owenrumney/squealer/total)](https://github.com/owenrumney/squealer/releases)
 
-Squealer scans a local git repository for secrets that are being leaked deep within the commit history. 
+Squealer scans a git repository or filesystem for secrets that are being leaked deep within the commit history. 
 
 The built-in configuration has the following checks;
 
