@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE=owenrum/squealer
+IMAGE=owenrumney/squealer
 docker login -u $DOCKER_USERNAME --password $DOCKER_PASSWORD
 
 echo "building ${IMAGE}..."

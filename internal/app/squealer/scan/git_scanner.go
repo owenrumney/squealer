@@ -12,8 +12,8 @@ import (
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/owenrum/squealer/internal/app/squealer/match"
-	"github.com/owenrum/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
 
 type CommitFile struct {

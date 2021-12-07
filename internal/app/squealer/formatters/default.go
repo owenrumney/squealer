@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/owenrum/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
 )
 
 type DefaultFormatter struct {
