@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/owenrum/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
 )
 
 func TestSarifFormmaterOutput(t *testing.T) {
@@ -20,7 +20,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
       "tool": {
         "driver": {
           "name": "squealer",
-          "informationUri": "https://github.com/owenrum/squealer",
+          "informationUri": "https://github.com/owenrumney/squealer",
           "rules": [
             {
               "id": "sdjn34rf32fds",
@@ -84,7 +84,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
       "tool": {
         "driver": {
           "name": "squealer",
-          "informationUri": "https://github.com/owenrum/squealer",
+          "informationUri": "https://github.com/owenrumney/squealer",
           "rules": [
             {
               "id": "sdjn34rf32fds",

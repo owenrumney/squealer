@@ -1,8 +1,8 @@
 package scan
 
 import (
-	"github.com/owenrum/squealer/internal/app/squealer/match"
-	"github.com/owenrum/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"io/ioutil"
 	"os"
 	"path/filepath"

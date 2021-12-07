@@ -8,10 +8,10 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/owenrum/squealer/internal/app/squealer/formatters"
-	"github.com/owenrum/squealer/internal/app/squealer/mertics"
-	"github.com/owenrum/squealer/internal/app/squealer/scan"
-	"github.com/owenrum/squealer/pkg/config"
+	"github.com/owenrumney/squealer/internal/app/squealer/formatters"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/internal/app/squealer/scan"
+	"github.com/owenrumney/squealer/pkg/config"
 )
 
 var rootcmd = &cobra.Command{

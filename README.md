@@ -4,9 +4,9 @@
 
 ### Telling tales on you for leaking secrets!
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/owenrum/squealer)](https://goreportcard.com/report/github.com/owenrum/squealer)
-[![Github Release](https://img.shields.io/github/release/owenrum/squealer.svg)](https://github.com/owenrum/squealer/releases)
-[![GitHub All Releases](https://img.shields.io/github/downloads/owenrum/squealer/total)](https://github.com/owenrum/squealer/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/owenrumney/squealer)](https://goreportcard.com/report/github.com/owenrumney/squealer)
+[![Github Release](https://img.shields.io/github/release/owenrumney/squealer.svg)](https://github.com/owenrumney/squealer/releases)
+[![GitHub All Releases](https://img.shields.io/github/downloads/owenrumney/squealer/total)](https://github.com/owenrumney/squealer/releases)
 
 Squealer scans a git repository or filesystem for secrets that are being leaked deep within the commit history. 
 
@@ -32,7 +32,7 @@ Sometimes we have secrets committed to our projects, generally we can invalidate
 ## Installation
 
 ```bash
-curl -s "https://raw.githubusercontent.com/owenrum/squealer/main/scripts/install.sh" | bash
+curl -s "https://raw.githubusercontent.com/owenrumney/squealer/main/scripts/install.sh" | bash
 ```
 
 
@@ -161,7 +161,7 @@ Squealer can be used for scanning a specific string using either the default con
 ### Adding the library
 
 ```
-go get -u github.com/owenrum/squealer
+go get -u github.com/owenrumney/squealer
 ```
 
 ### Using the code
@@ -170,7 +170,7 @@ go get -u github.com/owenrum/squealer
 import (
 	"fmt"
 
-	"github.com/owenrum/squealer/pkg/squealer"
+	"github.com/owenrumney/squealer/pkg/squealer"
 )
 
 func main() {

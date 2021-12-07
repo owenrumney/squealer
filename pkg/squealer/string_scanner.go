@@ -1,9 +1,9 @@
 package squealer
 
 import (
-	"github.com/owenrum/squealer/internal/app/squealer/match"
-	"github.com/owenrum/squealer/pkg/config"
-	"github.com/owenrum/squealer/pkg/result"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/pkg/config"
+	"github.com/owenrumney/squealer/pkg/result"
 )
 
 type StringScanner struct {

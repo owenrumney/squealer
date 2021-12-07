@@ -10,9 +10,9 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/owenrum/squealer/internal/app/squealer/mertics"
-	"github.com/owenrum/squealer/pkg/config"
-	"github.com/owenrum/squealer/pkg/result"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/pkg/config"
+	"github.com/owenrumney/squealer/pkg/result"
 )
 
 type Matcher struct {

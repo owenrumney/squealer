@@ -3,7 +3,7 @@ package formatters
 import (
 	"encoding/json"
 
-	"github.com/owenrum/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
 )
 
 type JsonFormatter struct {

@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/owenrum/squealer/pkg/config"
+	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 
