@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/owenrumney/go-sarif/sarif"
+	"github.com/owenrum/go-sarif/sarif"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrum/squealer/internal/app/squealer/match"
 )
 
 type SarifFormatter struct {
@@ -22,7 +22,7 @@ func (s SarifFormatter) PrintTransgressions(transgressions []match.Transgression
 		return "", err
 	}
 
-	run := sarif.NewRun("squealer", "https://github.com/owenrumney/squealer")
+	run := sarif.NewRun("squealer", "https://github.com/owenrum/squealer")
 
 	for _, t := range transgressions {
 		var content = t.LineContent

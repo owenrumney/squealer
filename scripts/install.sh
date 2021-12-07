@@ -10,7 +10,7 @@ echo "Determining platform..."
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 
 echo "Finding latest release..."
-asset=$(curl --user "x:${GITHUB_TOKEN}" --silent https://api.github.com/repos/owenrumney/squealer/releases/latest | jq -r ".assets[] | select(.name | contains(\"${platform}\")) | .url")
+asset=$(curl --user "x:${GITHUB_TOKEN}" --silent https://api.github.com/repos/owenrum/squealer/releases/latest | jq -r ".assets[] | select(.name | contains(\"${platform}\")) | .url")
 echo "Downloading latest release for your platform..."
 curl -s -L -H "Accept: application/octet-stream" --user "x:${GITHUB_TOKEN}" "${asset}" --output ./squealer
 echo "Installing squealer..."

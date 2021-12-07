@@ -1,6 +1,6 @@
 default: build
 
-IMAGE := owenrumney/squealer
+IMAGE := owenrum/squealer
 
 .PHONY: build
 build: test

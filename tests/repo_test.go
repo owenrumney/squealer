@@ -3,8 +3,8 @@ package tests
 import (
 	"testing"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/scan"
-	"github.com/owenrumney/squealer/pkg/config"
+	"github.com/owenrum/squealer/internal/app/squealer/scan"
+	"github.com/owenrum/squealer/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 

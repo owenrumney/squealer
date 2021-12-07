@@ -8,7 +8,7 @@ builds:
     main: ./cmd/squealer
     binary: squealer
     ldflags:
-    - "-X github.com/owenrumney/squealer/version.Version={{.Version}} -s -w -extldflags '-fno-PIC -static'"
+    - "-X github.com/owenrum/squealer/version.Version={{.Version}} -s -w -extldflags '-fno-PIC -static'"
     env:
       - CGO_ENABLED=0
       - GOFLAGS=-mod=vendor
@@ -40,7 +40,7 @@ archives:
 
 release:
   github:
-    owner: owenrumney
+    owner: owenrum
     name: squealer
 
 dockers:
@@ -52,8 +52,8 @@ dockers:
 
     dockerfile: Dockerfile
     image_templates:
-    - "owenrumney/squealer:latest"
-    - "owenrumney/squealer:{{ .Tag }}"
-    - "owenrumney/squealer:v{{ .Major }}.{{ .Minor }}"
+    - "owenrum/squealer:latest"
+    - "owenrum/squealer:{{ .Tag }}"
+    - "owenrum/squealer:v{{ .Major }}.{{ .Minor }}"
 
   

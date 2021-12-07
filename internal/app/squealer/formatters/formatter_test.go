@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrum/squealer/internal/app/squealer/match"
 )
 
 func TestGetFormatter(t *testing.T) {
