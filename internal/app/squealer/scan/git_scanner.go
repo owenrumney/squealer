@@ -9,7 +9,6 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/owenrumney/squealer/internal/app/squealer/match"
@@ -76,10 +75,10 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 	var useCommitShaList = false
 
 	if s.commitListFile != "" {
-		logrus.Debug("limiting the commit list check")
+		log.Debug("limiting the commit list check")
 		s.commitShas, _ = s.processSpecificCommits()
 		useCommitShaList = len(s.commitShas) > 0
-		logrus.Debugf("commit limited to %d commits", len(s.commitShas))
+		log.Debugf("commit limited to %d commits", len(s.commitShas))
 	}
 
 	commits, err := s.getRelevantCommitIter(client)
@@ -132,7 +131,7 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 		s.metrics.IncrementCommitsProcessed()
 	}
 	if err != nil && err != io.EOF {
-		logrus.WithError(err).Error("error was not null or an EOF")
+		log.WithError(err).Error("error was not null or an EOF")
 	}
 
 	close(ch)
@@ -262,7 +261,7 @@ func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 	var err error
 
 	if headRef != plumbing.ZeroHash {
-		logrus.Infof("starting at hash %s", headRef.String())
+		log.Infof("starting at hash %s", headRef.String())
 		commits, err = client.Log(&git.LogOptions{
 			From:  headRef,
 			All:   false,
@@ -272,7 +271,7 @@ func (s *gitScanner) getRelevantCommitIter(client *git.Repository) (object.Commi
 			return nil, err
 		}
 	} else {
-		logrus.Info("No head was found, scanning all commits")
+		log.Info("No head was found, scanning all commits")
 		commits, err = client.CommitObjects()
 		if err != nil {
 			return nil, err
@@ -299,14 +298,14 @@ func (s *gitScanner) processSpecificCommits() (map[string]bool, error) {
 	var commitShas = make(map[string]bool)
 	for r.Scan() {
 		c := r.Text()
-		logrus.Debugf("adding commit limit to %s", c)
+		log.Debugf("adding commit limit to %s", c)
 		commitShas[c] = true
 	}
 	return commitShas, nil
 }
 
 func (s *gitScanner) isNotValidCommit(commitSha string) bool {
-	logrus.Tracef("Checking validity of commit %s", commitSha)
+	log.Tracef("Checking validity of commit %s", commitSha)
 	_, ok := s.commitShas[commitSha]
 	return !ok
 }
