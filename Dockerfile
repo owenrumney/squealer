@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.15.2
 
 # use a non-privileged user
 USER nobody

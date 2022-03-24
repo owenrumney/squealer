@@ -1,11 +1,12 @@
 package scan
 
 import (
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
-	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
 )
 
 type directoryScanner struct {
@@ -38,6 +39,9 @@ func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
 
 func (d directoryScanner) Scan() ([]match.Transgression, error) {
 	return nil, filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() || shouldIgnore(path, d.ignorePaths, d.ignoreExtensions) {
 			return nil
 		}
