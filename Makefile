@@ -14,5 +14,11 @@ test:
 push-image:
 	./scripts/publish-image.sh
 
+.PHONY: image
 image:
 	docker build --build-arg squealer_version=$(TRAVIS_TAG) -t $(IMAGE) .
+
+.PHONY: quality
+quality:
+	which golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
+	golangci-lint run --timeout 3m --verbose

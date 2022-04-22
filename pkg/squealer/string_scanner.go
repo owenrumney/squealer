@@ -1,7 +1,7 @@
 package squealer
 
 import (
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/pkg/match"
 	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/owenrumney/squealer/pkg/result"
 )
