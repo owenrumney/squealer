@@ -10,6 +10,8 @@ type Config struct {
 type MatchRule struct {
 	Rule        string `yaml:"rule" json:"rule"`
 	Description string `yaml:"description" json:"description"`
+	FileFilter  string `yaml:"file" json:"file"`
+	Entropy     string
 }
 
 type RuleException struct {

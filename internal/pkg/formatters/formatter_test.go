@@ -1,10 +1,11 @@
 package formatters
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/owenrumney/squealer/internal/pkg/match"
 )
 
 func TestGetFormatter(t *testing.T) {

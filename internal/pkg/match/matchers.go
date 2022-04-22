@@ -10,7 +10,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/internal/pkg/mertics"
 	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/owenrumney/squealer/pkg/result"
 )
@@ -18,6 +18,7 @@ import (
 type Matcher struct {
 	test        *regexp.Regexp
 	description string
+	fileFilter  *regexp.Regexp
 }
 
 type Matchers []*Matcher
@@ -50,13 +51,24 @@ func NewMatcherController(cfg *config.Config, metrics *mertics.Metrics, redacted
 }
 
 func (mc *MatcherController) add(rule config.MatchRule) error {
-	compile, err := regexp.Compile(rule.Rule)
+	compiledTest, err := regexp.Compile(rule.Rule)
 	if err != nil {
-		return fmt.Errorf("failed to compile the regex. %v", err.Error())
+		return fmt.Errorf("failed to compile the regex. %w", err)
 	}
+
+	var compiledFileFilter *regexp.Regexp
+
+	if rule.FileFilter != "" {
+		compiledFileFilter, err = regexp.Compile(rule.FileFilter)
+		if err != nil {
+			return fmt.Errorf("failed to compile the file filter regex. %w", err)
+		}
+	}
+
 	mc.matchers = append(mc.matchers, &Matcher{
-		test:        compile,
+		test:        compiledTest,
 		description: rule.Description,
+		fileFilter:  compiledFileFilter,
 	})
 	return nil
 }
@@ -64,6 +76,11 @@ func (mc *MatcherController) add(rule config.MatchRule) error {
 func (mc *MatcherController) Evaluate(filename, content string, commit *object.Commit) error {
 	log.Debugf("\tfile: %s", filename)
 	for _, matcher := range mc.matchers {
+
+		if matcher.fileFilter != nil && !matcher.fileFilter.MatchString(filename) {
+			// only match transgressions where the file is valid
+			continue
+		}
 		if matcher.test.MatchString(content) {
 			mc.addTransgression(&content, filename, matcher, commit)
 		}

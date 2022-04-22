@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
-	"github.com/owenrumney/squealer/internal/app/squealer/mertics"
+	"github.com/owenrumney/squealer/internal/pkg/match"
+	"github.com/owenrumney/squealer/internal/pkg/mertics"
 )
 
 type directoryScanner struct {

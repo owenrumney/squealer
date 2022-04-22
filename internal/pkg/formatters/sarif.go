@@ -6,7 +6,7 @@ import (
 
 	"github.com/owenrumney/go-sarif/sarif"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/pkg/match"
 )
 
 type SarifFormatter struct {

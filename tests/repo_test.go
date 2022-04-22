@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/scan"
+	"github.com/owenrumney/squealer/internal/pkg/scan"
 	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/stretchr/testify/assert"
 )

@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/owenrumney/squealer/internal/app/squealer/match"
+	"github.com/owenrumney/squealer/internal/pkg/match"
 )
 
 func TestSarifFormmaterOutput(t *testing.T) {
