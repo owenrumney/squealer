@@ -4,11 +4,12 @@
 package scan
 
 import (
-	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (s *gitScanner) monitorSignals(processes int, wg *sync.WaitGroup) {
