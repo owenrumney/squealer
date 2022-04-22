@@ -4,7 +4,7 @@ on:
     branches:
       - master
   pull_request:
-  
+
 jobs:
   build:
     name: building squealer
@@ -16,9 +16,11 @@ jobs:
     - uses: actions/setup-go@v2
       with:
         stable: 'false'
-        go-version: '1.16.2' # The Go version to download (if necessary) and use.
+        go-version: '1.17.0' # The Go version to download (if necessary) and use.
     - run: go version
     
     - name: Run test
       run: make test
-      
+
+    - name: Check quality
+      run: make quality

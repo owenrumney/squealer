@@ -3,6 +3,8 @@ package tests
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/owenrumney/squealer/internal/pkg/scan"
 	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/stretchr/testify/assert"
@@ -15,13 +17,13 @@ func TestRepoEndToEnd(t *testing.T) {
 		Redacted: true,
 	})
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	_, err = scanner.Scan()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	metrics := scanner.GetMetrics()
 	assert.Equal(t, int32(3), metrics.CommitsProcessed)
-	assert.Equal(t, int32(4), metrics.TransgressionsFound)
+	assert.Equal(t, int32(7), metrics.TransgressionsFound)
 	assert.Equal(t, int32(0), metrics.TransgressionsIgnored)
 	assert.Equal(t, int32(4), metrics.TransgressionsReported)
 }
@@ -33,13 +35,13 @@ func TestDirEndToEnd(t *testing.T) {
 		Redacted: true,
 	})
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	_, err = scanner.Scan()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	metrics := scanner.GetMetrics()
 	assert.Equal(t, int32(0), metrics.CommitsProcessed)
-	assert.Equal(t, int32(3), metrics.TransgressionsFound)
+	assert.Equal(t, int32(6), metrics.TransgressionsFound)
 	assert.Equal(t, int32(0), metrics.TransgressionsIgnored)
 	assert.Equal(t, int32(3), metrics.TransgressionsReported)
 }
@@ -52,13 +54,13 @@ func TestRepoEndToEndWithEverything(t *testing.T) {
 		Everything: true,
 	})
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	_, err = scanner.Scan()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	metrics := scanner.GetMetrics()
 	assert.Equal(t, int32(3), metrics.CommitsProcessed)
-	assert.Equal(t, int32(4), metrics.TransgressionsFound)
+	assert.Equal(t, int32(7), metrics.TransgressionsFound)
 	assert.Equal(t, int32(0), metrics.TransgressionsIgnored)
 	assert.Equal(t, int32(4), metrics.TransgressionsReported)
 }

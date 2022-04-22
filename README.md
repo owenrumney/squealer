@@ -1,4 +1,4 @@
-![Sqealer](squealer.png)
+![Squealer](.github/image/ssquealer.png)
 
 # Squealer
 
@@ -164,9 +164,52 @@ Squealer can be used for scanning a specific string using either the default con
 go get -u github.com/owenrumney/squealer
 ```
 
-### Using the code
+### Using as a library
 
-```golang
+#### Git and Directory Scanning
+
+```go
+package main
+
+import (
+	"fmt"
+	
+	"github.com/owenrumney/squealer/pkg/squealer"
+)
+
+func main() {
+
+	// create a new scanner (optionally load your own config in)
+	scanner, err :=  squealer.New(
+		squealer.OptionWithConfig(*cfg), // if not supplied , config.DefaultConfig() used
+		squealer.OptionRedactedSecrets(redacted), // defaults to true, secrets in output redacted
+		squealer.OptionNoGitScan(noGit), // Treat Directories with .git in them as Directories, defaults to false
+		squealer.OptionWithBasePath(basePath), // The path to scan, default is '.'
+		squealer.OptionWithFromHash(fromHash), // Specify the starting hash for the scan, useful for PRs
+		squealer.OptionWithToHash(toHash), // Specify the hash to stop scanning, useful for PRs scanning
+		squealer.OptionWithScanEverything(everything), // Scan everything in every branch, defaults to only the current branch
+		squealer.OptionWithCommitListFile(commitListFile), // a file of commits that you want to explicitly scan in a text file.
+	)
+
+	transgressions, err := scanner.Scan()
+	if err != nil {
+		panic(err)
+	}
+	
+	for _, t := range transgressions {
+		fmt.Printf("%s[%d]\n", t.Filename, t.LineNo)
+    }
+}
+
+
+```
+
+#### String Scanning
+
+
+```go
+package main
+
 import (
 	"fmt"
 

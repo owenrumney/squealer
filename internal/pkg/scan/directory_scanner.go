@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 
 	"github.com/owenrumney/squealer/internal/pkg/match"
-	"github.com/owenrumney/squealer/internal/pkg/mertics"
+	"github.com/owenrumney/squealer/internal/pkg/metrics"
 )
 
 type directoryScanner struct {
 	mc               match.MatcherController
-	metrics          *mertics.Metrics
+	metrics          *metrics.Metrics
 	workingDirectory string
 	ignorePaths      []string
 	ignoreExtensions []string
@@ -25,7 +25,7 @@ func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
 	if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
 	}
-	metrics := mertics.NewMetrics()
+	metrics := metrics.NewMetrics()
 	mc := match.NewMatcherController(sc.Cfg, metrics, sc.Redacted)
 	scanner := &directoryScanner{
 		mc:               *mc,
@@ -53,6 +53,6 @@ func (d directoryScanner) Scan() ([]match.Transgression, error) {
 	})
 }
 
-func (d directoryScanner) GetMetrics() *mertics.Metrics {
+func (d directoryScanner) GetMetrics() *metrics.Metrics {
 	return d.metrics
 }

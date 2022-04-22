@@ -5,12 +5,13 @@ import (
 	"math"
 	"os"
 
+	"github.com/owenrumney/squealer/pkg/squealer"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/owenrumney/squealer/internal/pkg/formatters"
-	"github.com/owenrumney/squealer/internal/pkg/mertics"
-	"github.com/owenrumney/squealer/internal/pkg/scan"
+	"github.com/owenrumney/squealer/internal/pkg/metrics"
 	"github.com/owenrumney/squealer/pkg/config"
 )
 
@@ -34,11 +35,11 @@ func Root() *cobra.Command {
 		Long:  `Telling tales on your secret leaking`,
 		RunE:  squeal,
 	}
+	configureFlags(rootCommand)
 	return rootCommand
 }
 
 func init() {
-
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetOutput(os.Stderr)
 	log.SetLevel(log.InfoLevel)
@@ -90,7 +91,7 @@ func squeal(_ *cobra.Command, args []string) error {
 		log.WithError(err).Error(err.Error())
 	}
 
-	fmt.Printf(output)
+	fmt.Println(output)
 
 	metrics := scanner.GetMetrics()
 	if !concise {
@@ -102,24 +103,21 @@ func squeal(_ *cobra.Command, args []string) error {
 	return nil
 }
 
-func getScanner(cfg *config.Config, basePath string) (scan.Scanner, error) {
-	scanner, err := scan.NewScanner(scan.ScannerConfig{
-		Cfg:            cfg,
-		Basepath:       basePath,
-		Redacted:       redacted,
-		NoGit:          noGit,
-		FromHash:       fromHash,
-		ToHash:         toHash,
-		Everything:     everything,
-		CommitListFile: commitListFile,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return scanner, nil
+func getScanner(cfg *config.Config, basePath string) (squealer.Scanner, error) {
+	scanner, err := squealer.New(
+		squealer.OptionWithConfig(*cfg),
+		squealer.OptionRedactedSecrets(redacted),
+		squealer.OptionNoGitScan(noGit),
+		squealer.OptionWithBasePath(basePath),
+		squealer.OptionWithFromHash(fromHash),
+		squealer.OptionWithToHash(toHash),
+		squealer.OptionWithScanEverything(everything),
+		squealer.OptionWithCommitListFile(commitListFile),
+	)
+	return *scanner, err
 }
 
-func printMetrics(metrics *mertics.Metrics) string {
+func printMetrics(metrics *metrics.Metrics) string {
 	duration, _ := metrics.Duration()
 	return fmt.Sprintf(`
 Processing:

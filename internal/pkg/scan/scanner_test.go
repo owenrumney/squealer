@@ -6,33 +6,35 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewScannerIsGitScanner(t *testing.T) {
 	tempdir, err := ioutil.TempDir("/tmp", "test")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	dir := fmt.Sprintf("%s/.git", tempdir)
-	os.MkdirAll(dir, 0600)
-
+	err = os.MkdirAll(dir, 0600)
+	require.NoError(t, err)
 	sc := ScannerConfig{
 		Cfg:      config.DefaultConfig(),
 		Basepath: tempdir,
 	}
 	scanner, err := NewScanner(sc)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.IsType(t, &gitScanner{}, scanner)
 }
 
 func TestNewScannerIsDirectoryScanner(t *testing.T) {
 	sc := ScannerConfig{
 		Cfg:      config.DefaultConfig(),
-		Basepath: "../../../../test_resources",
+		Basepath: "../../../test_resources",
 	}
 	scanner, err := NewScanner(sc)
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.IsType(t, &directoryScanner{}, scanner)
 }
 

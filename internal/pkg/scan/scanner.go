@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/owenrumney/squealer/internal/pkg/match"
-	"github.com/owenrumney/squealer/internal/pkg/mertics"
+	"github.com/owenrumney/squealer/internal/pkg/metrics"
 	"github.com/owenrumney/squealer/pkg/config"
 )
 
@@ -34,7 +34,7 @@ type ScannerConfig struct {
 
 type Scanner interface {
 	Scan() ([]match.Transgression, error)
-	GetMetrics() *mertics.Metrics
+	GetMetrics() *metrics.Metrics
 	GetType() ScannerType
 }
 

@@ -10,7 +10,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/owenrumney/squealer/internal/pkg/mertics"
+	"github.com/owenrumney/squealer/internal/pkg/metrics"
 	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/owenrumney/squealer/pkg/result"
 )
@@ -27,11 +27,11 @@ type MatcherController struct {
 	matchers       Matchers
 	exclusions     []config.RuleException
 	transgressions *transgressionMap
-	metrics        *mertics.Metrics
+	metrics        *metrics.Metrics
 	redacted       bool
 }
 
-func NewMatcherController(cfg *config.Config, metrics *mertics.Metrics, redacted bool) *MatcherController {
+func NewMatcherController(cfg *config.Config, metrics *metrics.Metrics, redacted bool) *MatcherController {
 	mc := &MatcherController{
 		matchers:       []*Matcher{},
 		transgressions: newTransgressions(),
@@ -90,6 +90,10 @@ func (mc *MatcherController) Evaluate(filename, content string, commit *object.C
 
 func (mc *MatcherController) EvaluateString(content string) result.StringScanResult {
 	for _, matcher := range mc.matchers {
+		if matcher.fileFilter != nil {
+			// only match transgressions where the file is valid
+			continue
+		}
 		if matcher.test.MatchString(content) {
 			return result.NewTransgressionResult(matcher.description)
 		}

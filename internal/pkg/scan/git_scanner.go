@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/owenrumney/squealer/internal/pkg/match"
-	"github.com/owenrumney/squealer/internal/pkg/mertics"
+	"github.com/owenrumney/squealer/internal/pkg/metrics"
 )
 
 type CommitFile struct {
@@ -23,7 +23,7 @@ type CommitFile struct {
 
 type gitScanner struct {
 	mc               match.MatcherController
-	metrics          *mertics.Metrics
+	metrics          *metrics.Metrics
 	workingDirectory string
 	ignorePaths      []string
 	fromHash         plumbing.Hash
@@ -43,7 +43,7 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 	if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
 	}
-	metrics := mertics.NewMetrics()
+	metrics := metrics.NewMetrics()
 	mc := match.NewMatcherController(sc.Cfg, metrics, sc.Redacted)
 
 	scanner := &gitScanner{
@@ -110,7 +110,7 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 		}()
 	}
 
-	s.monitorSignals(processes, wg)
+	s.monitorSignals(processes, &wg)
 
 	commit, err := commits.Next()
 	for err == nil && commit != nil {
@@ -230,7 +230,7 @@ func (s *gitScanner) processFile(cf CommitFile) error {
 	return err
 }
 
-func (s *gitScanner) GetMetrics() *mertics.Metrics {
+func (s *gitScanner) GetMetrics() *metrics.Metrics {
 	return s.metrics
 }
 
