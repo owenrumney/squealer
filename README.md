@@ -1,4 +1,4 @@
-![Squealer](.github/image/ssquealer.png)
+![Squealer](.github/images/ssquealer.png)
 
 # Squealer
 
