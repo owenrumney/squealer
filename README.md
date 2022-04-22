@@ -175,20 +175,21 @@ import (
 	"fmt"
 	
 	"github.com/owenrumney/squealer/pkg/squealer"
+	"github.com/owenrumney/squealer/pkg/config"
 )
 
 func main() {
 
 	// create a new scanner (optionally load your own config in)
 	scanner, err :=  squealer.New(
-		squealer.OptionWithConfig(*cfg), // if not supplied , config.DefaultConfig() used
-		squealer.OptionRedactedSecrets(redacted), // defaults to true, secrets in output redacted
-		squealer.OptionNoGitScan(noGit), // Treat Directories with .git in them as Directories, defaults to false
-		squealer.OptionWithBasePath(basePath), // The path to scan, default is '.'
-		squealer.OptionWithFromHash(fromHash), // Specify the starting hash for the scan, useful for PRs
-		squealer.OptionWithToHash(toHash), // Specify the hash to stop scanning, useful for PRs scanning
-		squealer.OptionWithScanEverything(everything), // Scan everything in every branch, defaults to only the current branch
-		squealer.OptionWithCommitListFile(commitListFile), // a file of commits that you want to explicitly scan in a text file.
+		squealer.OptionWithConfig(config.DefaultConfig()), // if not supplied , config.DefaultConfig() used
+		squealer.OptionRedactedSecrets(true), // defaults to true, secrets in output redacted
+		squealer.OptionNoGitScan(false), // Treat Directories with .git in them as Directories, defaults to false
+		squealer.OptionWithBasePath("."), // The path to scan, default is '.'
+		squealer.OptionWithFromHash(""), // Specify the starting hash for the scan, useful for PRs
+		squealer.OptionWithToHash(""), // Specify the hash to stop scanning, useful for PRs scanning
+		squealer.OptionWithScanEverything(false), // Scan everything in every branch, defaults to only the current branch
+		squealer.OptionWithCommitListFile(""), // a file of commits that you want to explicitly scan in a text file.
 	)
 
 	transgressions, err := scanner.Scan()
