@@ -15,18 +15,11 @@ import (
 	"github.com/owenrumney/squealer/pkg/config"
 )
 
-var (
-	redacted       = false
-	concise        = false
-	noGit          = false
-	debug          = false
-	everything     = false
-	configFilePath string
-	fromHash       string
-	toHash         string
-	commitListFile string
-	format         string
-)
+func init() {
+	log.SetFormatter(&log.TextFormatter{})
+	log.SetOutput(os.Stderr)
+	log.SetLevel(log.InfoLevel)
+}
 
 func Root() *cobra.Command {
 	rootCommand := &cobra.Command{
@@ -37,26 +30,6 @@ func Root() *cobra.Command {
 	}
 	configureFlags(rootCommand)
 	return rootCommand
-}
-
-func init() {
-	log.SetFormatter(&log.TextFormatter{})
-	log.SetOutput(os.Stderr)
-	log.SetLevel(log.InfoLevel)
-}
-
-func configureFlags(command *cobra.Command) {
-	command.PersistentFlags().BoolVar(&redacted, "redacted", redacted, "Display the results redacted.")
-	command.PersistentFlags().BoolVar(&concise, "concise", concise, "Reduced output.")
-	command.PersistentFlags().BoolVar(&noGit, "no-git", noGit, "Scan as a directory rather than a git history.")
-	command.PersistentFlags().BoolVar(&debug, "debug", debug, "Include debug output.")
-	command.PersistentFlags().BoolVar(&everything, "everything", everything, "Scan all commits.... everywhere.")
-	command.PersistentFlags().StringVar(&configFilePath, "config-file", configFilePath, "Path to the config file with the rules.")
-	command.PersistentFlags().StringVar(&fromHash, "from-hash", fromHash, "The hash to work back to from the starting hash.")
-	command.PersistentFlags().StringVar(&toHash, "to-hash", toHash, "The most recent hash to start with.")
-	command.PersistentFlags().StringVar(&format, "output-format", format, "The format that the output should come in (default, json, sarif.")
-	command.PersistentFlags().StringVar(&commitListFile, "commits-file", commitListFile, "Provide a file with the commits to check per line (git rev-list master..HEAD)")
-
 }
 
 func squeal(_ *cobra.Command, args []string) error {
@@ -93,12 +66,12 @@ func squeal(_ *cobra.Command, args []string) error {
 
 	fmt.Println(output)
 
-	metrics := scanner.GetMetrics()
+	scanMetrics := scanner.GetMetrics()
 	if !concise {
-		_, _ = fmt.Fprint(os.Stderr, printMetrics(metrics))
+		_, _ = fmt.Fprint(os.Stderr, printMetrics(scanMetrics))
 	}
 
-	exitCode := int(math.Min(float64(metrics.TransgressionsReported), 1))
+	exitCode := int(math.Min(float64(scanMetrics.TransgressionsReported), 1))
 	os.Exit(exitCode)
 	return nil
 }

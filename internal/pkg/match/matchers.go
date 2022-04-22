@@ -19,6 +19,7 @@ type Matcher struct {
 	test        *regexp.Regexp
 	description string
 	fileFilter  *regexp.Regexp
+	entropy     string
 }
 
 type Matchers []*Matcher
@@ -69,6 +70,7 @@ func (mc *MatcherController) add(rule config.MatchRule) error {
 		test:        compiledTest,
 		description: rule.Description,
 		fileFilter:  compiledFileFilter,
+		entropy:     rule.Entropy,
 	})
 	return nil
 }
@@ -82,6 +84,7 @@ func (mc *MatcherController) Evaluate(filename, content string, commit *object.C
 			continue
 		}
 		if matcher.test.MatchString(content) {
+
 			mc.addTransgression(&content, filename, matcher, commit)
 		}
 	}
@@ -106,6 +109,17 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 
 	m := matcher.test.FindString(*content)
 	if len(m) > 0 {
+		if matcher.entropy != "" {
+			inBounds, err := entropyCheck(m, matcher.entropy)
+			if err != nil {
+				log.Errorf("an error occured checking the entropy %s", err.Error())
+				return
+			}
+			if !inBounds {
+				return
+			}
+		}
+
 		lineNo, lineContent := lineInFile(m, lines)
 		secretHash := mc.newHash(m)
 		key := fmt.Sprintf("%s:%s", name, secretHash)
