@@ -20,6 +20,7 @@ func TestJsonFormatterOutput(t *testing.T) {
       "line_number": 10,
       "secret_hash": "sdjn34rf32fds",
       "match_string": "Password1234",
+      "match_description": "Some Description",
       "committer": {
         "name": "Joe Bloggs",
         "email": "joe@bloggs.com"
@@ -40,6 +41,7 @@ func TestJsonFormatterOutput(t *testing.T) {
       "line_number": 10,
       "secret_hash": "sdjn34rf32fds",
       "match_string": "Password1234",
+      "match_description": "Some Description",
       "committer": {
         "name": "Joe Bloggs",
         "email": "joe@bloggs.com"

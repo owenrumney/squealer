@@ -47,7 +47,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
           "ruleId": "sdjn34rf32fds",
           "level": "error",
           "message": {
-            "text": "found transgression [password=Password1234], secret hashs [sdjn34rf32fds]"
+            "text": "found transgression [Some Description] [password=Password1234], secret hashs [sdjn34rf32fds]"
           },
           "locations": [
             {
@@ -111,7 +111,7 @@ func TestSarifFormmaterOutput(t *testing.T) {
           "ruleId": "sdjn34rf32fds",
           "level": "error",
           "message": {
-            "text": "found transgression [password=REDACTED], secret hashs [sdjn34rf32fds]"
+            "text": "found transgression [Some Description] [password=REDACTED], secret hashs [sdjn34rf32fds]"
           },
           "locations": [
             {
