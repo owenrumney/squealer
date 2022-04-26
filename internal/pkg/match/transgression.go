@@ -2,25 +2,27 @@ package match
 
 import (
 	"fmt"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"strings"
+
+	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
 type Transgression struct {
-	LineContent     string
-	Filename        string
-	Hash            string
-	Match           string
-	RedactedContent string
-	Committer       string
-	CommitterEmail  string
-	CommitHash      string
-	ExcludeRule     string
-	Committed       string
-	LineNo          int
+	LineContent      string
+	Filename         string
+	Hash             string
+	Match            string
+	MatchDescription string
+	RedactedContent  string
+	Committer        string
+	CommitterEmail   string
+	CommitHash       string
+	ExcludeRule      string
+	Committed        string
+	LineNo           int
 }
 
-func newTransgression(lineNo int, lineContent, filename, match, hash string, commit *object.Commit) Transgression {
+func newTransgression(lineNo int, lineContent, filename, match, matchDescription, hash string, commit *object.Commit) Transgression {
 	content := strings.TrimSpace(lineContent)
 
 	commitHash := "-- not applicable --"
@@ -35,17 +37,18 @@ func newTransgression(lineNo int, lineContent, filename, match, hash string, com
 	}
 
 	return Transgression{
-		LineNo:          lineNo,
-		LineContent:     content,
-		Filename:        filename,
-		Hash:            hash,
-		Match:           match,
-		RedactedContent: strings.ReplaceAll(content, match, "REDACTED"),
-		Committer:       committerName,
-		CommitterEmail:  committerEmail,
-		Committed:       when,
-		CommitHash:      commitHash,
-		ExcludeRule:     fmt.Sprintf("%s:%s", filename, hash),
+		LineNo:           lineNo,
+		LineContent:      content,
+		Filename:         filename,
+		Hash:             hash,
+		Match:            match,
+		MatchDescription: matchDescription,
+		RedactedContent:  strings.ReplaceAll(content, match, "REDACTED"),
+		Committer:        committerName,
+		CommitterEmail:   committerEmail,
+		Committed:        when,
+		CommitHash:       commitHash,
+		ExcludeRule:      fmt.Sprintf("%s:%s", filename, hash),
 	}
 }
 

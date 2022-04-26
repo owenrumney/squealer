@@ -19,15 +19,16 @@ func (d DefaultFormatter) PrintTransgressions(transgressions []match.Transgressi
 			content = t.RedactedContent
 		}
 		builder.Write([]byte(fmt.Sprintf(`
-Content:      | %s
-Filename:     | %s
-Line No:      | %d
-Secret Hash:  | %s
-Commit:       | %s
-Committer:    | %s (%s)
-Committed:    | %s
-Exclude rule: | %s
-`, content, t.Filename, t.LineNo, t.Hash, t.CommitHash, t.Committer, t.CommitterEmail, t.Committed, t.ExcludeRule)))
+Match Description: │ %s
+Content:           │ %s
+Filename:          │ %s
+Line No:           │ %d
+Secret Hash:       │ %s
+Commit:            │ %s
+Committer:         │ %s (%s)
+Committed:         │ %s
+Exclude rule:      │ %s
+`, t.MatchDescription, content, t.Filename, t.LineNo, t.Hash, t.CommitHash, t.Committer, t.CommitterEmail, t.Committed, t.ExcludeRule)))
 	}
 	return builder.String(), nil
 }

@@ -24,7 +24,7 @@ func configureFlags(command *cobra.Command) {
 	command.PersistentFlags().StringVar(&configFilePath, "config-file", configFilePath, "Path to the config file with the rules.")
 	command.PersistentFlags().StringVar(&fromHash, "from-hash", fromHash, "The hash to work back to from the starting hash.")
 	command.PersistentFlags().StringVar(&toHash, "to-hash", toHash, "The most recent hash to start with.")
-	command.PersistentFlags().StringVar(&format, "output-format", format, "The format that the output should come in (default, json, sarif.")
+	command.PersistentFlags().StringVarP(&format, "output-format", "f", format, "The format that the output should come in (default, json, sarif.")
 	command.PersistentFlags().StringVar(&commitListFile, "commits-file", commitListFile, "Provide a file with the commits to check per line (git rev-list master..HEAD)")
 
 }

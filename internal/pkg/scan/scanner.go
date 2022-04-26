@@ -49,6 +49,9 @@ func NewScanner(sc ScannerConfig) (Scanner, error) {
 
 func notGit(basepath string) bool {
 	log.Debugf("checking if there is a git repository")
+	if strings.HasPrefix(basepath, "git:") || strings.HasPrefix(basepath, "https://") {
+		return false
+	}
 	if stat, err := os.Stat(basepath); err == nil && stat != nil {
 		gitPath := fmt.Sprintf("%s/.git", basepath)
 		if _, ok := os.Stat(gitPath); ok != nil {

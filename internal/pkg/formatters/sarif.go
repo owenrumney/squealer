@@ -36,7 +36,7 @@ func (s SarifFormatter) PrintTransgressions(transgressions []match.Transgression
 		run.AddDistinctArtifact(t.Filename)
 
 		result := run.AddResult(rule.ID).
-			WithMessage(sarif.NewTextMessage(fmt.Sprintf("found transgression [%s], secret hashs [%s]", content, t.Hash))).
+			WithMessage(sarif.NewTextMessage(fmt.Sprintf("found transgression [%s] [%s], secret hashs [%s]", t.MatchDescription, content, t.Hash))).
 			WithLevel("error").
 			WithLocation(
 				sarif.NewLocationWithPhysicalLocation(

@@ -19,15 +19,16 @@ type committer struct {
 }
 
 type transgressionBlock struct {
-	Content     string    `json:"content"`
-	Filename    string    `json:"filename"`
-	LineNo      int       `json:"line_number"`
-	Hash        string    `json:"secret_hash"`
-	Match       string    `json:"match_string"`
-	Committer   committer `json:"committer"`
-	CommitHash  string    `json:"commit_hash"`
-	Committed   string    `json:"committed"`
-	ExcludeRule string    `json:"exclude_rule"`
+	Content          string    `json:"content"`
+	Filename         string    `json:"filename"`
+	LineNo           int       `json:"line_number"`
+	Hash             string    `json:"secret_hash"`
+	Match            string    `json:"match_string"`
+	MatchDescription string    `json:"match_description"`
+	Committer        committer `json:"committer"`
+	CommitHash       string    `json:"commit_hash"`
+	Committed        string    `json:"committed"`
+	ExcludeRule      string    `json:"exclude_rule"`
 }
 
 func (j JsonFormatter) PrintTransgressions(transgressions []match.Transgression, redacted bool) (string, error) {
@@ -40,11 +41,12 @@ func (j JsonFormatter) PrintTransgressions(transgressions []match.Transgression,
 		}
 
 		tb = append(tb, transgressionBlock{
-			Content:  content,
-			Filename: t.Filename,
-			LineNo:   t.LineNo,
-			Hash:     t.Hash,
-			Match:    t.Match,
+			Content:          content,
+			Filename:         t.Filename,
+			LineNo:           t.LineNo,
+			Hash:             t.Hash,
+			MatchDescription: t.MatchDescription,
+			Match:            t.Match,
 			Committer: committer{
 				Name:  t.Committer,
 				Email: t.CommitterEmail,

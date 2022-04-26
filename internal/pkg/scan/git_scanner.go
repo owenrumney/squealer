@@ -4,7 +4,12 @@ import (
 	"bufio"
 	"io"
 	"os"
+	"strings"
 	"sync"
+
+	"github.com/go-git/go-billy/v5/memfs"
+
+	"github.com/go-git/go-git/v5/storage/memory"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -40,7 +45,8 @@ func (s *gitScanner) GetType() ScannerType {
 }
 
 func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
-	if _, err := os.Stat(sc.Basepath); err != nil {
+	if strings.HasPrefix(sc.Basepath, "git:") || strings.HasPrefix(sc.Basepath, "https:") {
+	} else if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
 	}
 	metrics := metrics.NewMetrics()
@@ -68,10 +74,27 @@ func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
 }
 
 func (s *gitScanner) Scan() ([]match.Transgression, error) {
-	client, err := git.PlainOpen(s.workingDirectory)
-	if err != nil {
-		return nil, err
+	var client *git.Repository
+	var err error
+
+	if strings.HasPrefix(s.workingDirectory, "git:") || strings.HasPrefix(s.workingDirectory, "https:") {
+		log.Infof("Cloning %s to memory...", s.workingDirectory)
+		fs := memfs.New()
+		client, err = git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
+			URL: s.workingDirectory,
+		})
+
+		log.Info("Clone complete...")
+	} else {
+		client, err = git.PlainOpen(s.workingDirectory)
+		if err != nil {
+			return nil, err
+		}
 	}
+	return s.scan(client)
+}
+
+func (s *gitScanner) scan(client *git.Repository) ([]match.Transgression, error) {
 	var useCommitShaList = false
 
 	if s.commitListFile != "" {

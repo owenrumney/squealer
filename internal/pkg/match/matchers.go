@@ -133,7 +133,7 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 
 		if !mc.transgressions.exists(key) {
 			mc.metrics.IncrementTransgressionsReported()
-			transgression := newTransgression(lineNo, lineContent, name, m, secretHash, commit)
+			transgression := newTransgression(lineNo, lineContent, name, m, matcher.description, secretHash, commit)
 			mc.transgressions.add(key, transgression)
 			log.Debugf("recording transgression in commit: %s", transgression.CommitHash)
 		}
