@@ -83,6 +83,9 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 		client, err = git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 			URL: s.workingDirectory,
 		})
+		if err != nil {
+			return nil, err
+		}
 
 		log.Info("Clone complete...")
 	} else {
