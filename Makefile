@@ -20,5 +20,5 @@ image:
 
 .PHONY: quality
 quality:
-	which golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
+	which golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0
 	golangci-lint run --timeout 3m --verbose
