@@ -267,4 +267,4 @@ func main() {
 
 ## Credits
 
-[Image by Derangedmisfit](https://derangedmisfit.newgrounds.com/)
+Image by George Rumney
