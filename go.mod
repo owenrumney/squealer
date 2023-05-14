@@ -1,10 +1,11 @@
 module github.com/owenrumney/squealer
 
-go 1.17
+go 1.20
 
 require (
 	github.com/go-git/go-billy/v5 v5.4.1
 	github.com/go-git/go-git/v5 v5.6.1
+	github.com/liamg/tml v0.6.0
 	github.com/owenrumney/go-sarif v1.1.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.7.0

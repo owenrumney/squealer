@@ -1,7 +1,6 @@
 package scan
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -38,19 +37,22 @@ func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
 }
 
 func (d directoryScanner) Scan() ([]match.Transgression, error) {
-	return nil, filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.IsDir() || shouldIgnore(path, d.ignorePaths, d.ignoreExtensions) {
 			return nil
 		}
-		content, err := ioutil.ReadFile(path)
+		content, err := os.ReadFile(path)
 		if err != nil {
 			return err
 		}
 		return d.mc.Evaluate(path, string(content), nil)
-	})
+	}); err != nil {
+		return nil, err
+	}
+	return d.mc.Transgressions(), nil
 }
 
 func (d directoryScanner) GetMetrics() *metrics.Metrics {

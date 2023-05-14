@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"os"
 	"testing"
+		"github.com/liamg/tml"
 )
 
 var gitTestPath string
 var dirTestPath string
 
 func TestMain(t *testing.M) {
+tml.DisableFormatting()
+
 	getwd, _ := os.Getwd()
 	repo, err := unpackTestRepo(fmt.Sprintf("%s/../test_resources/sloppygit.tar", getwd))
 	if err != nil {

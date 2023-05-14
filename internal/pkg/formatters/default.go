@@ -1,9 +1,9 @@
 package formatters
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/liamg/tml"
 	"github.com/owenrumney/squealer/internal/pkg/match"
 )
 
@@ -18,16 +18,16 @@ func (d DefaultFormatter) PrintTransgressions(transgressions []match.Transgressi
 		if redacted {
 			content = t.RedactedContent
 		}
-		builder.Write([]byte(fmt.Sprintf(`
-Match Description: │ %s
-Content:           │ %s
-Filename:          │ %s
-Line No:           │ %d
-Secret Hash:       │ %s
-Commit:            │ %s
-Committer:         │ %s (%s)
-Committed:         │ %s
-Exclude rule:      │ %s
+		builder.Write([]byte(tml.Sprintf(`
+<blue>Match Description:</blue> <yellow>│</yellow> %s
+<blue>Content:</blue>           <yellow>|</yellow> <red>%s</red>
+<blue>Filename:</blue>          <yellow>|</yellow> %s
+<blue>Line No:</blue>           <yellow>|</yellow> %d
+<blue>Secret Hash:</blue>       <yellow>|</yellow> %s
+<blue>Commit:</blue>            <yellow>|</yellow> %s
+<blue>Committer:</blue>         <yellow>|</yellow> %s (%s)
+<blue>Committed:</blue>         <yellow>|</yellow> %s
+<blue>Exclude rule:</blue>      <yellow>|</yellow> %s
 `, t.MatchDescription, content, t.Filename, t.LineNo, t.Hash, t.CommitHash, t.Committer, t.CommitterEmail, t.Committed, t.ExcludeRule)))
 	}
 	return builder.String(), nil

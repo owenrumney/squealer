@@ -42,6 +42,12 @@ func TestSquealerStrings(t *testing.T) {
 			expectedResultDescription: "",
 			expectedResultStatus:      false,
 		},
+		{
+			name:                      "openai secret in a string",
+			content:                   "sk-7arcSBd9CVSr5EeeVsS4T3BlbkDJ3f5ZWIhWZD2ZkUsZfPei",
+			expectedResultDescription: "OpenAI Secret Key",
+			expectedResultStatus:      true,
+		},
 	}
 
 	stringSquealer := NewStringScanner()

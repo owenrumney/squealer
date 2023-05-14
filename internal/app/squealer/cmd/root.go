@@ -98,7 +98,7 @@ Processing:
   commits:      %d
   commit files: %d
 
-transgressionMap:
+Transgressions:
   identified:   %d
   ignored:      %d
   reported:     %d

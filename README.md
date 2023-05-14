@@ -8,26 +8,51 @@
 [![Github Release](https://img.shields.io/github/release/owenrumney/squealer.svg)](https://github.com/owenrumney/squealer/releases)
 [![GitHub All Releases](https://img.shields.io/github/downloads/owenrumney/squealer/total)](https://github.com/owenrumney/squealer/releases)
 
-Squealer scans a git repository or filesystem for secrets that are being leaked deep within the commit history. 
+Squealer scans a git repository or filesystem for secrets that are being leaked deep within the commit history.
 
-The built-in configuration has the following checks;
+![Squealer](.github/images/squealer.gif)
 
-AWS
-- access key id
-- access secret key
+The built-in configuration includes the following checks;
 
-Github
-- github token
+- AnsibleVault
+- AWS Manager ID
+- AWS MWS key
+- AWS Secret Key
+- Base64 Encoded Certificates
+- DomainPassword
+- DSA
+- Dynatrace token
+- Facebook Creds
+- GitCredential
+- Github
+- Google API key
+- Heroku API key
+- Keychain file
+- KeyStoreFile
+- LinkedIn Creds
+- MailChimp API key
+- Mailgun API key
+- NPM Token
+- OAuth Token
+- OpenAI Secret Key
+- OPENSSH
+- OpenVPN
+- Password literal text
+- PayPal Braintree access token
+- PGP
+- Picatic API key
+- Postgres password
+- PublishSettings
+- RSA
+- Shopify credentials
+- Slack credentials
+- SQL Connection Strings
+- Square credentials
+- Stripe API key
+- Twilio API key
+- Twitter credentials
 
-Slack
-- slack token OAUTH
-- webhook url
-
-
-Other
-- Asymmetric Private Key
-
-Sometimes we have secrets committed to our projects, generally we can invalidate them and move on. If squealer is telling tales about a secret that you are aware of and has been mitigated, you can use the `exception` rule found in the output to register it as ignored.
+Sometimes we have secrets committed to our projects, generally, we can invalidate them and move on. If Squealer is telling tales about a secret that you are aware of and has been mitigated, you can use the `exception` rule found in the output to register it as ignored.
 
 ## Installation
 
@@ -35,10 +60,9 @@ Sometimes we have secrets committed to our projects, generally we can invalidate
 curl -s "https://raw.githubusercontent.com/owenrumney/squealer/main/scripts/install.sh" | bash
 ```
 
-
 ## Usage
 
-Squealer is intended to be run either locally or as part of a CI process. 
+Squealer is intended to be run either locally or as part of a CI process.
 
 ```shell
 ./squealer --help
@@ -60,41 +84,53 @@ Flags:
       --to-hash string         The most recent hash to start with.
 ```
 
+### Scan remote repositories
+
+```shell
+squealer git@github.com:owenrumney/woopsie.git
+```
+
+### Scan local repositories as a directory
+
+```shell
+squealer --no-git /path/to/repo
+```
+
 ### Config File
 
 ```yaml
 rules:
-- rule: (A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}
-  description: Check for AWS Access Key Id
-- rule: (?i)aws(.{0,20})?(?-i)['\"][0-9a-zA-Z\/+]{40}['\"]
-  description: Check for AWS Secret Access Key
-- rule: (?i)github[_\-\.]?token[\s:,="\]']+?(?-i)[0-9a-zA-Z]{35,40}
-  description: Check for Github Token 
-- rule: https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}
-  description: Check for Slack webhook
-- rule: xox[baprs]-([0-9a-zA-Z]{10,48})?
-  description: Check for Slack token
-- rule: '-----BEGIN ((EC|PGP|DSA|RSA|OPENSSH) )?PRIVATE KEY( BLOCK)?-----'
-  description: Check for Private Asymetric Key
+  - rule: (A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}
+    description: Check for AWS Access Key Id
+  - rule: (?i)aws(.{0,20})?(?-i)['\"][0-9a-zA-Z\/+]{40}['\"]
+    description: Check for AWS Secret Access Key
+  - rule: (?i)github[_\-\.]?token[\s:,="\]']+?(?-i)[0-9a-zA-Z]{35,40}
+    description: Check for Github Token
+  - rule: https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}
+    description: Check for Slack webhook
+  - rule: xox[baprs]-([0-9a-zA-Z]{10,48})?
+    description: Check for Slack token
+  - rule: "-----BEGIN ((EC|PGP|DSA|RSA|OPENSSH) )?PRIVATE KEY( BLOCK)?-----"
+    description: Check for Private Asymetric Key
 ignore_paths:
-- vendor
-- node_modules
+  - vendor
+  - node_modules
 ignore_extensions:
-- .zip
-- .png
-- .jpg
-- .pdf
-- .xls
-- .doc
-- .docx
+  - .zip
+  - .png
+  - .jpg
+  - .pdf
+  - .xls
+  - .doc
+  - .docx
 exceptions:
-- exception: release/update.go:D2IDetI6aidl58GE6dv5uAaWmXM=
-  reason: This is a webhook that we got rid of - can be ignored in this file
+  - exception: release/update.go:D2IDetI6aidl58GE6dv5uAaWmXM=
+    reason: This is a webhook that we got rid of - can be ignored in this file
 ```
 
 ### Config breakdown
 
-The config file is made up of the `rules`, `ignore_prefixes`, `ignore_extensions` and `exceptions`. 
+The config file is made up of the `rules`, `ignore_prefixes`, `ignore_extensions` and `exceptions`.
 
 #### rules
 
@@ -106,7 +142,7 @@ Ignore paths are folders that you don't want to look ing - generally `vendor` an
 
 #### ignore_extensions
 
-Ignore extensions have the file types that won't be scanned. Binaries are automatically ignored.
+Ignore extensions that have these file types that won't be scanned. Binaries are automatically ignored.
 
 #### exceptions
 
@@ -153,7 +189,6 @@ INFO[0002] Exit code: 1
 
 It's worth noting that these are known because they're examples in the documentation for tfsec - I can add them to the `config.yaml` as exclusions y using the `Exclude rule`
 
-
 ## Using as a library
 
 Squealer can be used for scanning a specific string using either the default config or by passing your own file in.
@@ -173,7 +208,7 @@ package main
 
 import (
 	"fmt"
-	
+
 	"github.com/owenrumney/squealer/pkg/squealer"
 	"github.com/owenrumney/squealer/pkg/config"
 )
@@ -196,7 +231,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	for _, t := range transgressions {
 		fmt.Printf("%s[%d]\n", t.Filename, t.LineNo)
     }
@@ -206,7 +241,6 @@ func main() {
 ```
 
 #### String Scanning
-
 
 ```go
 package main
@@ -230,7 +264,6 @@ func main() {
 }
 
 ```
-
 
 ## Credits
 
