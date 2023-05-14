@@ -1,6 +1,7 @@
 package config
 
 type Config struct {
+	IncludeDefault   bool            `yaml:"include_default" json:"include_default"`
 	Rules            []MatchRule     `yaml:"rules" json:"rules"`
 	IgnorePaths      []string        `yaml:"ignore_paths" json:"ignore_paths"`
 	IgnoreExtensions []string        `yaml:"ignore_extensions" json:"ignore_extensions"`

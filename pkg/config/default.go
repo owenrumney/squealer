@@ -3,7 +3,7 @@ package config
 func DefaultConfig() *Config {
 	return &Config{
 		Rules: []MatchRule{
-			{
+		{
 				Rule:        `(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}`,
 				Description: "Check for AWS Access Key Id",
 			},
@@ -21,16 +21,12 @@ func DefaultConfig() *Config {
 			},
 			{
 				Rule:        `xox[baprs]-([0-9a-zA-Z]{10,48})?`,
-				Description: "Check for Slack token",
 			},
 			{
 				Rule:        `-----BEGIN ((EC|PGP|DSA|RSA|OPENSSH) )?PRIVATE KEY( BLOCK)?-----`,
-				Description: "Check for Private Asymetric Key",
+				Description: "Private Asymetric Key",
 			},
-			{
-				Rule:        `https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}`,
-				Description: "Check for Slack webhook",
-			},
+
 			{
 				Rule:        `xox.-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-zA-Z0-9]{32}`,
 				Description: "Slack API Token",
@@ -76,7 +72,7 @@ func DefaultConfig() *Config {
 				Rule:        `(?i)twitter(.{0,20})?['\"][0-9a-z]{18,25}['\"]`,
 			},
 			{
-				Description: "Github",
+				Description: "GitHub Token",
 				Rule:        `(?i)github.{0,3}((?i)token|api|key).{0,10}?(?-i)([0-9a-zA-Z]{35,40})`,
 			},
 			{
@@ -416,6 +412,10 @@ func DefaultConfig() *Config {
 				Description: "SlackToken 2",
 				Rule:        `xoxb-[a-z0-9]+-[a-z0-9]+`,
 			},
+			{
+				Description: "OpenAI Secret Key",
+				Rule:        `sk-[a-zA-Z0-9]+`,
+			},
 		},
 		IgnorePaths: []string{
 			"vendor",
@@ -429,6 +429,9 @@ func DefaultConfig() *Config {
 			".xls",
 			".doc",
 			".docx",
+			".css",
+			".scss",
+			".css.map",
 		},
 		Exceptions: []RuleException{},
 	}

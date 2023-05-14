@@ -45,7 +45,7 @@ func (s *gitScanner) GetType() ScannerType {
 }
 
 func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
-	if strings.HasPrefix(sc.Basepath, "git:") || strings.HasPrefix(sc.Basepath, "https:") {
+	if strings.HasPrefix(sc.Basepath, "git@") || strings.HasPrefix(sc.Basepath, "https:") {
 	} else if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (s *gitScanner) Scan() ([]match.Transgression, error) {
 	var client *git.Repository
 	var err error
 
-	if strings.HasPrefix(s.workingDirectory, "git:") || strings.HasPrefix(s.workingDirectory, "https:") {
+	if strings.HasPrefix(s.workingDirectory, "git@") || strings.HasPrefix(s.workingDirectory, "https:") {
 		log.Infof("Cloning %s to memory...", s.workingDirectory)
 		fs := memfs.New()
 		client, err = git.Clone(memory.NewStorage(), fs, &git.CloneOptions{

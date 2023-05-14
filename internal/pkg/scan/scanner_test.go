@@ -2,7 +2,7 @@ package scan
 
 import (
 	"fmt"
-	"io/ioutil"
+
 	"os"
 	"testing"
 
@@ -13,10 +13,9 @@ import (
 )
 
 func TestNewScannerIsGitScanner(t *testing.T) {
-	tempdir, err := ioutil.TempDir("/tmp", "test")
-	require.NoError(t, err)
+	tempdir := t.TempDir()
 	dir := fmt.Sprintf("%s/.git", tempdir)
-	err = os.MkdirAll(dir, 0600)
+	err := os.MkdirAll(dir, 0600)
 	require.NoError(t, err)
 	sc := ScannerConfig{
 		Cfg:      config.DefaultConfig(),

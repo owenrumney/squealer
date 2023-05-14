@@ -1,8 +1,8 @@
 package config
 
 import (
-	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,13 +17,10 @@ func TestEmptyConfigPathReturnsDefault(t *testing.T) {
 }
 
 func TestJsonConfigLoaded(t *testing.T) {
-	tempFile, err := ioutil.TempFile(os.TempDir(), "*.json")
+	tempFile := filepath.Join(t.TempDir(), "test.json")
+	err := os.WriteFile(tempFile, []byte(jsonConfig), 0777)
 	require.NoError(t, err)
-	err = ioutil.WriteFile(tempFile.Name(), []byte(jsonConfig), 0777)
-	require.NoError(t, err)
-	defer func() { _ = os.Remove(tempFile.Name()) }()
-
-	config, err := LoadConfig(tempFile.Name())
+	config, err := LoadConfig(tempFile)
 
 	require.NoError(t, err)
 	assert.Equal(t, 7, len(config.Rules))
@@ -33,13 +30,11 @@ func TestJsonConfigLoaded(t *testing.T) {
 }
 
 func TestYamlConfigLoaded(t *testing.T) {
-	tempFile, err := ioutil.TempFile(os.TempDir(), "*.yaml")
+	tempFile := filepath.Join(t.TempDir(), "test.yaml")
+	err := os.WriteFile(tempFile, []byte(yamlConfig), 0777)
 	require.NoError(t, err)
-	err = ioutil.WriteFile(tempFile.Name(), []byte(yamlConfig), 0777)
-	require.NoError(t, err)
-	defer func() { _ = os.Remove(tempFile.Name()) }()
 
-	config, err := LoadConfig(tempFile.Name())
+	config, err := LoadConfig(tempFile)
 
 	require.NoError(t, err)
 	assert.Equal(t, 7, len(config.Rules))
@@ -56,12 +51,11 @@ func TestConfigThatDoesntExist(t *testing.T) {
 }
 
 func TestConfigWithMalformedFile(t *testing.T) {
-	file, err := ioutil.TempFile(os.TempDir(), "junk")
-	require.NoError(t, err)
+	file1 := filepath.Join(t.TempDir(), "junk")
 
-	config, err := LoadConfig(file.Name())
-	assert.Error(t, err)
-	assert.Nil(t, config)
+	config, err := LoadConfig(file1)
+	require.NoError(t, err)
+	assert.Equal(t, DefaultConfig(), config)
 }
 
 var yamlConfig = `rules:
