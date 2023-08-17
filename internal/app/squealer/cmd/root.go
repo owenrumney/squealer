@@ -96,7 +96,7 @@ func printMetrics(metrics *metrics.Metrics) string {
 Processing:
   duration:     %4.2fs
   commits:      %d
-  commit files: %d
+  files:        %d
 
 transgressionMap:
   identified:   %d

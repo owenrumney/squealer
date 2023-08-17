@@ -49,6 +49,7 @@ func (d directoryScanner) Scan() ([]match.Transgression, error) {
 		if err != nil {
 			return err
 		}
+		d.metrics.IncrementFilesProcessed()
 		return d.mc.Evaluate(path, string(content), nil)
 	})
 }
