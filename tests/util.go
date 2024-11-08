@@ -3,13 +3,12 @@ package tests
 import (
 	"archive/tar"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
 func unpackTestRepo(tarpath string) (string, error) {
-	target, err := ioutil.TempDir(os.TempDir(), "squealer_*")
+	target, err := os.MkdirTemp(os.TempDir(), "squealer_*")
 	if err != nil {
 		return "", err
 	}

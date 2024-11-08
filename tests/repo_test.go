@@ -3,10 +3,10 @@ package tests
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/owenrumney/squealer/internal/pkg/scan"
 	"github.com/owenrumney/squealer/pkg/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRepoEndToEnd(t *testing.T) {
