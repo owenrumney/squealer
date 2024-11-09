@@ -3,7 +3,7 @@ package config
 func DefaultConfig() *Config {
 	return &Config{
 		Rules: []MatchRule{
-		{
+			{
 				Rule:        `(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}`,
 				Description: "Check for AWS Access Key Id",
 			},
@@ -20,7 +20,7 @@ func DefaultConfig() *Config {
 				Description: "Check for new Github Token",
 			},
 			{
-				Rule:        `xox[baprs]-([0-9a-zA-Z]{10,48})?`,
+				Rule: `xox[baprs]-([0-9a-zA-Z]{10,48})?`,
 			},
 			{
 				Rule:        `-----BEGIN ((EC|PGP|DSA|RSA|OPENSSH) )?PRIVATE KEY( BLOCK)?-----`,

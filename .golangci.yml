@@ -1,0 +1,92 @@
+run:
+  timeout: 3m
+  go: 1.20
+  modules-download-mode: vendor
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bidichk
+    - errcheck
+    - errchkjson
+    - gocritic
+    - gofmt
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - nakedret
+    - misspell
+    - nolintlint
+    # - nlreturn
+    - reassign
+    - staticcheck
+    - typecheck
+    - unused
+    - unconvert
+    - unparam
+    - vet
+    - vetshadow
+    - wastedassign
+
+linters-settings:
+  gocritic:
+    # Disable all checks.
+    # Default: false
+    disable-all: true
+    # Which checks should be enabled in addition to default checks; can't be combined with 'disabled-checks'.
+    # By default, list of stable checks is used (https://go-critic.github.io/overview#checks-overview).
+    # To see which checks are enabled run `GL_DEBUG=gocritic golangci-lint run --enable=gocritic`.
+    enabled-checks:
+      # diagnostic
+      - appendCombine
+      - argOrder
+      - badCall
+      - badCond
+      - badLock
+      - badRegexp
+      - badSorting
+      - builtinShadowDecl
+      - caseOrder
+      - codegenComment
+      # - commentedOutCode
+      # - deferInLoop
+      - deprecatedComment
+      - dupArg
+      - dupBranchBody
+      - dupCase
+      - dupSubExpr
+      - dynamicFmtString
+      - emptyDecl
+      - equalFold
+      - evalOrder
+      # - exitAfterDefer
+      - externalErrorReassign
+      - filepathJoin
+      - flagName
+      # - hugeParam
+      - indexAlloc
+      - mapKey
+      - nilValReturn
+      - offBy1
+      - preferDecodeRune
+      - preferFprint
+      - preferStringWriter
+      - preferWriteByte
+      - rangeExprCopy
+      # - rangeValCopy
+      - regexpPattern
+      - sliceClear
+      - sloppyLen
+      # - sloppyReassign
+      - sloppyTypeAssert
+      - sortSlice
+      - sprintfQuotedString
+      - sqlQuery
+      - stringXbytes
+      - syncMapLoadAndDelete
+      - truncateCmp
+      - uncheckedInlineErr
+      - unnecessaryDefer
+      - weakCond
