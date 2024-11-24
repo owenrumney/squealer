@@ -4,29 +4,32 @@ import (
 	"fmt"
 	"os"
 	"testing"
-		"github.com/liamg/tml"
+
+	"github.com/liamg/tml"
 )
 
 var gitTestPath string
 var dirTestPath string
 
 func TestMain(t *testing.M) {
-tml.DisableFormatting()
-
-	getwd, _ := os.Getwd()
-	repo, err := unpackTestRepo(fmt.Sprintf("%s/../test_resources/sloppygit.tar", getwd))
+	tml.DisableFormatting()
+	repo, err := unpackTestRepo("../test_resources/sloppygit.tar")
 	if err != nil {
 		panic(err)
 	}
-	defer func() { _ = os.RemoveAll(repo) }()
 	gitTestPath = fmt.Sprintf("%s/sloppy", repo)
 
-	dir, err := unpackTestRepo(fmt.Sprintf("%s/../test_resources/sloppy.tar", getwd))
+	dir, err := unpackTestRepo("../test_resources/sloppy.tar")
 	if err != nil {
 		panic(err)
 	}
-	defer func() { _ = os.RemoveAll(dir) }()
+
 	dirTestPath = fmt.Sprintf("%s/sloppy2", dir)
 
-	os.Exit(t.Run())
+	result := t.Run()
+
+	os.RemoveAll(repo)
+	os.RemoveAll(dir)
+
+	os.Exit(result)
 }

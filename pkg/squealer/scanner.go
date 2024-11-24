@@ -34,7 +34,7 @@ func New(options ...Option) (*Scanner, error) {
 		opt(scanner)
 	}
 
-	s, err := scan.NewScanner(scan.ScannerConfig{
+	s, err := scan.NewScanner(&scan.ScannerConfig{
 		Cfg:            scanner.config,
 		Basepath:       scanner.basePath,
 		Redacted:       scanner.redacted,
@@ -52,10 +52,10 @@ func New(options ...Option) (*Scanner, error) {
 	return scanner, nil
 }
 
-func (s Scanner) Scan() ([]match.Transgression, error) {
+func (s *Scanner) Scan() ([]match.Transgression, error) {
 	return s.scanner.Scan()
 }
 
-func (s Scanner) GetMetrics() *metrics.Metrics {
+func (s *Scanner) GetMetrics() *metrics.Metrics {
 	return s.scanner.GetMetrics()
 }

@@ -112,7 +112,7 @@ func (mc *MatcherController) addTransgression(content *string, name string, matc
 		if matcher.entropy != "" {
 			inBounds, err := entropyCheck(m, matcher.entropy)
 			if err != nil {
-				log.Errorf("an error occured checking the entropy %s", err.Error())
+				log.Errorf("an error occurred checking the entropy %s", err.Error())
 				return
 			}
 			if !inBounds {

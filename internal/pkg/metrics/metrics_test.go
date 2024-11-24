@@ -1,9 +1,10 @@
 package metrics
 
 import (
-	"github.com/stretchr/testify/assert"
 	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConcurrentMetricUpdatesProcessed(t *testing.T) {

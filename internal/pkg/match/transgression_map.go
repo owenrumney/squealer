@@ -16,11 +16,11 @@ func newTransgressions() *transgressionMap {
 	}
 }
 
-func (t *transgressionMap) add(key string, transgression Transgression) {
+func (t *transgressionMap) add(key string, transgression *Transgression) {
 	t.Lock()
 	existing := t.internal[key]
 	if existing == nil {
-		t.internal[key] = &transgression
+		t.internal[key] = transgression
 		t.counter += 1
 	} else {
 		existing.update(transgression)

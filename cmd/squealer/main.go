@@ -1,9 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/owenrumney/squealer/internal/app/squealer/cmd"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 func main() {

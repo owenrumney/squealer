@@ -44,7 +44,7 @@ func (s *gitScanner) GetType() ScannerType {
 	return GitScanner
 }
 
-func newGitScanner(sc ScannerConfig) (*gitScanner, error) {
+func newGitScanner(sc *ScannerConfig) (*gitScanner, error) {
 	if strings.HasPrefix(sc.Basepath, "git@") || strings.HasPrefix(sc.Basepath, "https:") {
 	} else if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err

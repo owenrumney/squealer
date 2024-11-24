@@ -38,7 +38,7 @@ type Scanner interface {
 	GetType() ScannerType
 }
 
-func NewScanner(sc ScannerConfig) (Scanner, error) {
+func NewScanner(sc *ScannerConfig) (Scanner, error) {
 	if sc.NoGit || notGit(sc.Basepath) {
 		log.Infof("Using a directory scanner to process %s\n", sc.Basepath)
 		return newDirectoryScanner(sc)

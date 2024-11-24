@@ -1,8 +1,9 @@
 package match
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateTransgressionMap(t *testing.T) {
@@ -18,7 +19,7 @@ func TestAddItemToTransgressionMap(t *testing.T) {
 	assert.NotNil(t, tm)
 	assert.Equal(t, 0, tm.count())
 
-	tm.add("test1", Transgression{
+	tm.add("test1", &Transgression{
 		LineContent:     "testing",
 		Filename:        "",
 		Hash:            "",
@@ -26,7 +27,7 @@ func TestAddItemToTransgressionMap(t *testing.T) {
 		RedactedContent: "",
 	})
 
-	tm.add("test1", Transgression{
+	tm.add("test1", &Transgression{
 		LineContent:     "testing2",
 		Filename:        "",
 		Hash:            "",
