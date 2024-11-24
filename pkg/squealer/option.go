@@ -4,9 +4,9 @@ import "github.com/owenrumney/squealer/pkg/config"
 
 type Option func(s *Scanner)
 
-func OptionWithConfig(config config.Config) Option {
+func OptionWithConfig(config *config.Config) Option {
 	return func(s *Scanner) {
-		s.config = &config
+		s.config = config
 	}
 }
 

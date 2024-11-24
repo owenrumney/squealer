@@ -15,7 +15,7 @@ func TestTransgressionUpdate(t *testing.T) {
 	assert.Equal(t, "2001-01-01", t1.Committed)
 	assert.Equal(t, "abcd", t1.CommitHash)
 
-	t1.update(t2)
+	t1.update(&t2)
 
 	assert.Equal(t, "Thom Thumb", t1.Committer)
 	assert.Equal(t, "joe@bloggs.com", t1.CommitterEmail)

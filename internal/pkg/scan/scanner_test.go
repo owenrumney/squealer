@@ -17,7 +17,7 @@ func TestNewScannerIsGitScanner(t *testing.T) {
 	dir := fmt.Sprintf("%s/.git", tempdir)
 	err := os.MkdirAll(dir, 0600)
 	require.NoError(t, err)
-	sc := ScannerConfig{
+	sc := &ScannerConfig{
 		Cfg:      config.DefaultConfig(),
 		Basepath: tempdir,
 	}
@@ -27,7 +27,7 @@ func TestNewScannerIsGitScanner(t *testing.T) {
 }
 
 func TestNewScannerIsDirectoryScanner(t *testing.T) {
-	sc := ScannerConfig{
+	sc := &ScannerConfig{
 		Cfg:      config.DefaultConfig(),
 		Basepath: "../../../test_resources",
 	}

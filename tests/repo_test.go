@@ -10,7 +10,7 @@ import (
 )
 
 func TestRepoEndToEnd(t *testing.T) {
-	scanner, err := scan.NewScanner(scan.ScannerConfig{
+	scanner, err := scan.NewScanner(&scan.ScannerConfig{
 		Cfg:      config.DefaultConfig(),
 		Basepath: gitTestPath,
 		Redacted: true,
@@ -28,7 +28,7 @@ func TestRepoEndToEnd(t *testing.T) {
 }
 
 func TestDirEndToEnd(t *testing.T) {
-	scanner, err := scan.NewScanner(scan.ScannerConfig{
+	scanner, err := scan.NewScanner(&scan.ScannerConfig{
 		Cfg:      config.DefaultConfig(),
 		Basepath: dirTestPath,
 		Redacted: true,
@@ -46,7 +46,7 @@ func TestDirEndToEnd(t *testing.T) {
 }
 
 func TestRepoEndToEndWithEverything(t *testing.T) {
-	scanner, err := scan.NewScanner(scan.ScannerConfig{
+	scanner, err := scan.NewScanner(&scan.ScannerConfig{
 		Cfg:        config.DefaultConfig(),
 		Basepath:   gitTestPath,
 		Redacted:   true,

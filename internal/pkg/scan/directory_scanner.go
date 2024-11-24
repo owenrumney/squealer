@@ -16,11 +16,11 @@ type directoryScanner struct {
 	ignoreExtensions []string
 }
 
-func (d directoryScanner) GetType() ScannerType {
+func (d *directoryScanner) GetType() ScannerType {
 	return DirectoryScanner
 }
 
-func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
+func newDirectoryScanner(sc *ScannerConfig) (*directoryScanner, error) {
 	if _, err := os.Stat(sc.Basepath); err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func newDirectoryScanner(sc ScannerConfig) (*directoryScanner, error) {
 	return scanner, nil
 }
 
-func (d directoryScanner) Scan() ([]match.Transgression, error) {
+func (d *directoryScanner) Scan() ([]match.Transgression, error) {
 	if err := filepath.Walk(d.workingDirectory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -56,6 +56,6 @@ func (d directoryScanner) Scan() ([]match.Transgression, error) {
 	return d.mc.Transgressions(), nil
 }
 
-func (d directoryScanner) GetMetrics() *metrics.Metrics {
+func (d *directoryScanner) GetMetrics() *metrics.Metrics {
 	return d.metrics
 }

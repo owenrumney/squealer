@@ -61,11 +61,11 @@ linters-settings:
       - emptyDecl
       - equalFold
       - evalOrder
-      # - exitAfterDefer
+      - exitAfterDefer
       - externalErrorReassign
       - filepathJoin
       - flagName
-      # - hugeParam
+      - hugeParam
       - indexAlloc
       - mapKey
       - nilValReturn
@@ -87,6 +87,5 @@ linters-settings:
       - stringXbytes
       - syncMapLoadAndDelete
       - truncateCmp
-      - uncheckedInlineErr
       - unnecessaryDefer
       - weakCond

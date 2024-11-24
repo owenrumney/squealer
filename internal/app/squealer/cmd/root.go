@@ -78,7 +78,7 @@ func squeal(_ *cobra.Command, args []string) error {
 
 func getScanner(cfg *config.Config, basePath string) (squealer.Scanner, error) {
 	scanner, err := squealer.New(
-		squealer.OptionWithConfig(*cfg),
+		squealer.OptionWithConfig(cfg),
 		squealer.OptionRedactedSecrets(redacted),
 		squealer.OptionNoGitScan(noGit),
 		squealer.OptionWithBasePath(basePath),
