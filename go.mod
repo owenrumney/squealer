@@ -1,6 +1,6 @@
 module github.com/owenrumney/squealer
 
-go 1.20
+go 1.23
 
 require (
 	github.com/go-git/go-billy/v5 v5.6.2
@@ -10,11 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
-<<<<<<< HEAD
 	gopkg.in/yaml.v3 v3.0.1
-=======
-	gopkg.in/yaml.v2 v2.4.0
->>>>>>> 3e90fd6 (chore(deps): bump github.com/stretchr/testify from 1.9.0 to 1.10.0)
 )
 
 require (

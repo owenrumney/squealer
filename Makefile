@@ -18,7 +18,7 @@ push-image:
 image:
 	docker build --build-arg squealer_version=$(TRAVIS_TAG) -t $(IMAGE) .
 
-.PHONY: quality
+.PHONY: lint
 quality:
-	which golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.0
+	which golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.63.4
 	golangci-lint run --timeout 3m --verbose
