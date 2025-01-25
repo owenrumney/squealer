@@ -1,4 +1,4 @@
-name: squealer build
+name: squealer test
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: building squealer
+    name: test
     runs-on: ubuntu-latest
 
     steps:
@@ -18,9 +18,6 @@ jobs:
         stable: 'false'
         go-version: '1.20.0' # The Go version to download (if necessary) and use.
     - run: go version
-
-    - name: Lint
-      run: make quality
 
     - name: Run test
       run: make test
