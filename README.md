@@ -189,6 +189,33 @@ INFO[0002] Exit code: 1
 
 It's worth noting that these are known because they're examples in the documentation for tfsec - I can add them to the `config.yaml` as exclusions y using the `Exclude rule`
 
+## Using in Docker
+
+`squealer` is built in Docker images for `amd64`, `arm64`, and `armv7` as `owenrumney/squealer`. You can run it against a mounted volume using 
+
+```bash
+docker run --rm -v `pwd`:/src owenrumney/squealer:latest /src --redacted    
+```
+
+in this example it returns
+
+```bash
+time="2025-01-29T13:38:20Z" level=warning msg="Config file '' not found, using default config"
+time="2025-01-29T13:38:20Z" level=info msg="Using a git scanner to process /src"
+time="2025-01-29T13:38:20Z" level=info msg="starting at hash 27958219bc1ad0ecd052cd2e092aea945d69d5d4"
+
+Processing:
+  duration:     0.91s
+  commits:      66
+  files:        468
+
+Transgressions:
+  identified:   0
+  ignored:      0
+  reported:     0
+
+```
+
 ## Using as a library
 
 Squealer can be used for scanning a specific string using either the default config or by passing your own file in.
