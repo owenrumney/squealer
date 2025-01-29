@@ -7,7 +7,7 @@ USER nobody
 COPY squealer /usr/bin/squealer
 
 # set the default entrypoint -- when this container is run, use this command
-ENTRYPOINT [ "sqealer" ]
+ENTRYPOINT [ "squealer" ]
 
 # as we specified an entrypoint, this is appended as an argument (i.e., `sqealer --help`)
 CMD [ "--help" ]
