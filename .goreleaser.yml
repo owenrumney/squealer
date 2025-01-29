@@ -49,7 +49,10 @@ release:
 dockers:
   - 
     goos: linux
-    goarch: amd64
+    goarch: 
+      - amd64
+      - arm64
+      - armv7
     ids:
     - squealer
 
