@@ -47,12 +47,8 @@ release:
     name: squealer
 
 dockers:
-  - 
-    goos: linux
-    goarch: 
-      - amd64
-      - arm64
-      - armv7
+  - goos: linux
+    goarch: amd64
     ids:
     - squealer
 
@@ -61,5 +57,25 @@ dockers:
     - "owenrumney/squealer:latest"
     - "owenrumney/squealer:{{ .Tag }}"
     - "owenrumney/squealer:v{{ .Major }}.{{ .Minor }}"
+  - goos: linux
+    goarch: arm64
+    ids:
+    - squealer
+
+    dockerfile: Dockerfile
+    image_templates:
+    - "owenrumney/squealer:latest-arm64"
+    - "owenrumney/squealer:{{ .Tag }}-arm64"
+    - "owenrumney/squealer:v{{ .Major }}.{{ .Minor }}-arm64"
+  - goos: linux
+    goarch: armv7
+    ids:
+    - squealer
+
+    dockerfile: Dockerfile
+    image_templates:
+    - "owenrumney/squealer:latest-armv7"
+    - "owenrumney/squealer:{{ .Tag }}-armv7"
+    - "owenrumney/squealer:v{{ .Major }}.{{ .Minor }}- armv7"
 
   
