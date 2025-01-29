@@ -13,6 +13,7 @@ var (
 	toHash         string
 	commitListFile string
 	format         string
+	showVersion    bool
 )
 
 func configureFlags(command *cobra.Command) {
@@ -21,6 +22,7 @@ func configureFlags(command *cobra.Command) {
 	command.PersistentFlags().BoolVar(&noGit, "no-git", noGit, "Scan as a directory rather than a git history.")
 	command.PersistentFlags().BoolVar(&debug, "debug", debug, "Include debug output.")
 	command.PersistentFlags().BoolVar(&everything, "everything", everything, "Scan all commits.... everywhere.")
+	command.PersistentFlags().BoolVar(&showVersion, "version", showVersion, "Show the version of the application.")
 	command.PersistentFlags().StringVar(&configFilePath, "config-file", configFilePath, "Path to the config file with the rules.")
 	command.PersistentFlags().StringVar(&fromHash, "from-hash", fromHash, "The hash to work back to from the starting hash.")
 	command.PersistentFlags().StringVar(&toHash, "to-hash", toHash, "The most recent hash to start with.")

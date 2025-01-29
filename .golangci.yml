@@ -1,6 +1,6 @@
 run:
   timeout: 3m
-  go: 1.20
+  go: 1.23.4
   modules-download-mode: vendor
 
 linters:
@@ -26,8 +26,6 @@ linters:
     - unused
     - unconvert
     - unparam
-    - vet
-    - vetshadow
     - wastedassign
 
 linters-settings:

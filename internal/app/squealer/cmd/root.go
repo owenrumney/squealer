@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"fmt"
+
 	"math"
 	"os"
 
 	"github.com/owenrumney/squealer/pkg/squealer"
+	"github.com/owenrumney/squealer/pkg/version"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -26,9 +28,16 @@ func Root() *cobra.Command {
 		Use:   "squealer",
 		Short: "Search for secrets and squeal about them",
 		Long:  `Telling tales on your secret leaking`,
-		RunE:  squeal,
+		PreRun: func(cmd *cobra.Command, args []string) {
+			if showVersion {
+				fmt.Println(version.Version)
+				os.Exit(0)
+			}
+		},
+		RunE: squeal,
 	}
 	configureFlags(rootCommand)
+
 	return rootCommand
 }
 
