@@ -9,8 +9,31 @@ mkdir -p "${GOBIN}"
 echo "Determining platform..."
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 
+echo "Determining architecture..."
+if [[ $platform == "darwin" ]]; then
+    if [[ $(uname -m)  == "arm64" ]]; then
+        architecture="arm64"
+    elif [[ $(uname -m) == "x86_64" ]]; then
+        architecture="amd64"
+    else
+        architecture=$(uname -m | tr '[:upper:]' '[:lower:]')
+    fi
+elif [[ $platform == "linux" ]]; then
+    architecture=$(dpkg --print-architecture | tr '[:upper:]' '[:lower:]')
+elif [[ $platform == "frebsd" ]]; then
+    architecture=$(dpkg --print-architecture | tr '[:upper:]' '[:lower:]')
+else
+    if [[ $(uname -m | tr '[:upper:]' '[:lower:]') == "x86_64" ]]; then
+        architecture="amd64"
+    elif [[ $(uname -m | tr '[:upper:]' '[:lower:]') == "aarch64" ]]; then
+        architecture="arm64"
+    else
+        architecture=$(uname -m | tr '[:upper:]' '[:lower:]')
+    fi
+fi
+
 echo "Finding latest release..."
-asset=$(curl --user "x:${GITHUB_TOKEN}" --silent https://api.github.com/repos/owenrumney/squealer/releases/latest | jq -r ".assets[] | select(.name | contains(\"${platform}\")) | .url")
+asset=$(curl --user "x:${GITHUB_TOKEN}" --silent https://api.github.com/repos/owenrumney/squealer/releases/latest | jq -r ".assets[] | select(.name | contains(\"${platform}.${architecture}\")) | .url")
 echo "Downloading latest release for your platform..."
 curl -s -L -H "Accept: application/octet-stream" --user "x:${GITHUB_TOKEN}" "${asset}" --output ./squealer
 echo "Installing squealer..."
