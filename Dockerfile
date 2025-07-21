@@ -1,4 +1,4 @@
-FROM alpine:3.21.3
+FROM alpine:3.22.1
 
 # Set the working directory
 WORKDIR /usr/bin
