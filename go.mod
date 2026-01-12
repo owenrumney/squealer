@@ -3,7 +3,7 @@ module github.com/owenrumney/squealer
 go 1.23.0
 
 require (
-	github.com/go-git/go-billy/v5 v5.6.2
+	github.com/go-git/go-billy/v5 v5.7.0
 	github.com/go-git/go-git/v5 v5.16.4
 	github.com/liamg/tml v0.7.0
 	github.com/owenrumney/go-sarif v1.1.1
