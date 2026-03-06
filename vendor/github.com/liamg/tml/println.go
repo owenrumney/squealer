@@ -1,6 +1,7 @@
 package tml
 
 import (
+	"fmt"
 	"io"
 	"os"
 )
@@ -12,5 +13,9 @@ func Println(input string) {
 }
 
 func Fprintln(w io.Writer, input string) {
-	Fprintf(w, "%s\n", input)
+	parsed, err := Parse(input)
+	if err != nil {
+		return
+	}
+	fmt.Fprintln(w, parsed)
 }
