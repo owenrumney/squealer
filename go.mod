@@ -7,7 +7,7 @@ require (
 	github.com/go-git/go-git/v5 v5.18.0
 	github.com/liamg/tml v0.7.1
 	github.com/owenrumney/go-sarif v1.1.1
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
