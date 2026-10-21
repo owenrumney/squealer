@@ -1,6 +1,6 @@
 module github.com/owenrumney/squealer
 
-go 1.25.0
+go 1.26.10
 
 require (
 	github.com/go-git/go-billy/v5 v5.9.0
